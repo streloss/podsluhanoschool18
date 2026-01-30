@@ -13,6 +13,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
   <style>
+    /* СТИЛИ ОСТАЮТСЯ ТЕМИ ЖЕ */
     :root {
       --primary: #3b82f6;
       --primary-dark: #2563eb;
@@ -213,7 +214,7 @@
       width: 50px;
       height: 50px;
       background: linear-gradient(135deg, var(--primary), var(--success));
-      border-radius: 12px; /* Овал */
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -225,7 +226,7 @@
 
     @media (max-width: 768px) {
       .logo {
-        border-radius: 50%; /* На мобильных - круг */
+        border-radius: 50%;
         width: 45px;
         height: 45px;
         font-size: 18px;
@@ -280,6 +281,52 @@
       align-items: center;
       gap: 8px;
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    /* КНОПКА ПРАВИЛ */
+    .rules-btn {
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      margin-right: 10px;
+    }
+
+    .rules-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--danger);
+    }
+
+    /* КНОПКА УВЕДОМЛЕНИЙ ДЛЯ МОДЕРАТОРОВ */
+    .notification-btn {
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      margin-right: 10px;
+    }
+
+    .notification-btn:hover {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--warning);
     }
 
     /* СЕТКА С ДВУМЯ КОЛОНКАМИ */
@@ -991,52 +1038,6 @@
     .changelog-submit-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-    }
-
-    /* КНОПКА ПРАВИЛ */
-    .rules-btn {
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: rgba(239, 68, 68, 0.1);
-      color: var(--danger);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      margin-right: 10px;
-    }
-
-    .rules-btn:hover {
-      background: rgba(239, 68, 68, 0.2);
-      border-color: var(--danger);
-    }
-
-    /* КНОПКА УВЕДОМЛЕНИЙ ДЛЯ МОДЕРАТОРОВ */
-    .notification-btn {
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--warning);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      margin-right: 10px;
-    }
-
-    .notification-btn:hover {
-      background: rgba(245, 158, 11, 0.2);
-      border-color: var(--warning);
     }
 
     /* FOOTER */
@@ -1875,8 +1876,8 @@
   const ADMIN_PASSWORD = "ADMIN18_MOD";
   const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 МБ
   const MAX_FILES = 3;
-  
-  // 🔥 FIREBASE
+
+  // 🔥 FIREBASE CONFIG
   const firebaseConfig = {
     apiKey: "AIzaSyAnD4g7ep8-4pNOYjNFWOqoi6-vfjctjTA",
     authDomain: "podsluhano18school.firebaseapp.com",
@@ -1889,16 +1890,21 @@
   };
 
   // Инициализация Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const postsRef = db.ref('posts');
-  const changelogsRef = db.ref('changelogs');
-  const broadcastRef = db.ref('broadcast');
+  let db, postsRef, changelogsRef, broadcastRef;
+  try {
+    const app = firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    postsRef = db.ref('posts');
+    changelogsRef = db.ref('changelogs');
+    broadcastRef = db.ref('broadcast');
+    console.log("Firebase инициализирован успешно");
+  } catch (error) {
+    console.error("Ошибка инициализации Firebase:", error);
+  }
 
   // Текущий контекст
   let isAdmin = false;
   let postToDelete = null;
-  let changelogToDelete = null;
   let isAnonymous = false;
   let selectedFiles = [];
 
@@ -1944,13 +1950,28 @@
 
   // Функции управления модальными окнами
   function showModal(modal) {
-    modal.classList.remove('hidden');
-    body.style.overflow = 'hidden';
+    if (modal) {
+      modal.classList.remove('hidden');
+      body.style.overflow = 'hidden';
+    }
   }
 
   function hideModal(modal) {
-    modal.classList.add('hidden');
-    body.style.overflow = '';
+    if (modal) {
+      modal.classList.add('hidden');
+      body.style.overflow = '';
+    }
+  }
+
+  function showImageModal(imageSrc) {
+    if (modalImage && imageSrc) {
+      modalImage.src = imageSrc;
+      showModal(imageModal);
+    }
+  }
+
+  function hideImageModal() {
+    hideModal(imageModal);
   }
 
   function showRules() {
@@ -1964,216 +1985,56 @@
   function showBroadcastModal() {
     if (!isAdmin) return;
     showModal(broadcastModal);
-    broadcastMessage.focus();
+    if (broadcastMessage) broadcastMessage.focus();
   }
 
   function hideBroadcastModal() {
     hideModal(broadcastModal);
-    broadcastMessage.value = '';
+    if (broadcastMessage) broadcastMessage.value = '';
   }
 
   function showFullscreenNotification(message) {
-    fullscreenMessage.innerHTML = message;
-    fullscreenNotification.classList.remove('hidden');
-    body.style.overflow = 'hidden';
+    if (fullscreenMessage && message) {
+      fullscreenMessage.innerHTML = message;
+      fullscreenNotification.classList.remove('hidden');
+      body.style.overflow = 'hidden';
+    }
   }
 
   function hideFullscreenNotification() {
     fullscreenNotification.classList.add('hidden');
     body.style.overflow = '';
-    location.reload(); // Обновляем страницу
+    location.reload();
   }
 
-  // Проверка объявлений при загрузке
-  broadcastRef.once('value', snap => {
-    const data = snap.val();
-    if (data && data.message && data.active) {
-      const lastSeen = localStorage.getItem('lastBroadcastId');
-      if (lastSeen !== data.id) {
-        showFullscreenNotification(data.message);
-        localStorage.setItem('lastBroadcastId', data.id);
-      }
-    }
-  });
-
-  // Отправка объявления
-  async function sendBroadcast() {
-    const message = broadcastMessage.value.trim();
-    
-    if (!message) {
-      showNotification('error', 'Ошибка', 'Введите текст объявления');
-      return;
-    }
-    
-    try {
-      const broadcastData = {
-        id: Date.now().toString(),
-        message: message,
-        active: true,
-        timestamp: Date.now(),
-        author: isAdmin ? 'Модератор' : 'Администрация'
-      };
-      
-      await broadcastRef.set(broadcastData);
-      
-      hideBroadcastModal();
-      showNotification('success', 'Успешно!', 'Объявление отправлено всем пользователям');
-      
-    } catch (error) {
-      showNotification('error', 'Ошибка', 'Не удалось отправить объявление');
-      console.error('Ошибка Firebase:', error);
+  // Changelog functions
+  function showChangelogForm() {
+    if (changelogForm && changelogMessage) {
+      changelogForm.classList.remove('hidden');
+      changelogMessage.focus();
     }
   }
 
-  // Остальные функции (enterForum, showImageModal, hideImageModal, showChangelogForm, hideChangelogForm, showNotification)
-  // остаются такими же как в предыдущем коде, только добавлены новые элементы
-
-  // Вход в форум
-  function enterForum() {
-    const code = document.getElementById('schoolCode').value.trim();
-    if (code !== SCHOOL_ACCESS_CODE) {
-      showNotification('error', 'Ошибка доступа', 'Неверный код доступа школы');
-      return;
-    }
-    localStorage.setItem('school18_access', 'true');
-    accessScreen.classList.add('hidden');
-    forum.classList.remove('hidden');
-    showNotification('success', 'Добро пожаловать!', 'Вы успешно вошли на форум');
-  }
-
-  // Проверка доступа при загрузке
-  if (localStorage.getItem('school18_access') === 'true') {
-    accessScreen.classList.add('hidden');
-    forum.classList.remove('hidden');
-  }
-
-  // АДМИН ФУНКЦИИ
-  function showAdminAuth() {
-    showModal(adminAuthModal);
-    document.getElementById('adminPassword').focus();
-  }
-
-  function hideAdminAuth() {
-    hideModal(adminAuthModal);
-    document.getElementById('adminPassword').value = '';
-  }
-
-  function adminLogin() {
-    const password = document.getElementById('adminPassword').value.trim();
-    if (password === ADMIN_PASSWORD) {
-      isAdmin = true;
-      localStorage.setItem('school18_admin', 'true');
-      adminAuthBtn.innerHTML = `
-        <span class="admin-badge">
-          <i class="fas fa-crown"></i> Модератор
-        </span>
-      `;
-      adminAuthBtn.onclick = adminLogout;
-      
-      // Показать кнопки для модератора
-      changelogAddBtn.classList.remove('hidden');
-      notificationBtn.classList.remove('hidden');
-      
-      hideAdminAuth();
-      showNotification('success', 'Успешно', 'Вы вошли как модератор');
-    } else {
-      showNotification('error', 'Ошибка', 'Неверный пароль');
+  function hideChangelogForm() {
+    if (changelogForm && changelogMessage) {
+      changelogForm.classList.add('hidden');
+      changelogMessage.value = '';
     }
   }
 
-  function adminLogout() {
-    isAdmin = false;
-    localStorage.removeItem('school18_admin');
-    adminAuthBtn.innerHTML = `
-      <i class="fas fa-user-shield"></i>
-      Модерация
-    `;
-    adminAuthBtn.onclick = showAdminAuth;
-    
-    // Скрыть кнопки для модератора
-    changelogAddBtn.classList.add('hidden');
-    notificationBtn.classList.add('hidden');
-    hideChangelogForm();
-    
-    showNotification('info', 'Выход', 'Вы вышли из режима модератора');
-  }
-
-  // Остальной код (функции для постов, changelogs, файлов, уведомлений)
-  // остается таким же как в предыдущей версии...
-
-  // Проверка админ-сессии при загрузке
-  if (localStorage.getItem('school18_admin') === 'true') {
-    isAdmin = true;
-    adminAuthBtn.innerHTML = `
-      <span class="admin-badge">
-        <i class="fas fa-crown"></i> Модератор
-      </span>
-    `;
-    adminAuthBtn.onclick = adminLogout;
-    changelogAddBtn.classList.remove('hidden');
-    notificationBtn.classList.remove('hidden');
-  }
-
-  // Закрытие модалок по клику вне области
-  window.addEventListener('click', (e) => {
-    if (e.target === adminAuthModal) hideAdminAuth();
-    if (e.target === rulesModal) hideRules();
-    if (e.target === broadcastModal) hideBroadcastModal();
-    if (e.target === deleteModal) hideDeleteModal();
-    if (e.target === imageModal) hideImageModal();
-    if (e.target === fullscreenNotification) hideFullscreenNotification();
-  });
-
-  // Закрытие по Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      hideAdminAuth();
-      hideRules();
-      hideBroadcastModal();
-      hideDeleteModal();
-      hideImageModal();
-      hideChangelogForm();
-    }
-  });
-
-  // Фокус на поле ввода кода при загрузке
-  document.addEventListener('DOMContentLoaded', () => {
-    const schoolCodeInput = document.getElementById('schoolCode');
-    if (schoolCodeInput) {
-      schoolCodeInput.focus();
-    }
-  });
-
-  // Автоматическое закрытие уведомления при клике
-  notification.addEventListener('click', () => {
-    notification.classList.remove('show');
-    setTimeout(() => notification.classList.add('hidden'), 300);
-  });
-
-  // Валидация формы при вводе
-  document.getElementById('text').addEventListener('input', function() {
-    const hasText = this.value.trim().length > 0;
-    const hasFiles = selectedFiles.length > 0;
-    publishBtn.disabled = !hasText && !hasFiles;
-  });
-
-  // Валидация changelog формы
-  changelogMessage.addEventListener('input', function() {
-    const submitBtn = document.querySelector('.changelog-submit-btn');
-    if (submitBtn) {
-      submitBtn.disabled = this.value.trim().length === 0;
-    }
-  });
-
-  // Функция showNotification (добавьте если её нет)
+  // Функции уведомлений
   function showNotification(type, title, message) {
+    if (!notification) return;
+    
     const icon = notification.querySelector('#notificationIcon');
     const notificationTitle = notification.querySelector('#notificationTitle');
     const notificationMessage = notification.querySelector('#notificationMessage');
     
+    if (!icon || !notificationTitle || !notificationMessage) return;
+    
     notification.className = `notification ${type}`;
-    notificationTitle.textContent = title;
-    notificationMessage.textContent = message;
+    notificationTitle.textContent = title || '';
+    notificationMessage.textContent = message || '';
     
     switch(type) {
       case 'success':
@@ -2196,64 +2057,331 @@
     }, 3000);
   }
 
-  // Переключение анонимного режима
-  anonymousToggle.addEventListener('click', function() {
-    isAnonymous = !isAnonymous;
-    this.classList.toggle('active', isAnonymous);
+  // Вход в форум
+  function enterForum() {
+    const schoolCodeInput = document.getElementById('schoolCode');
+    if (!schoolCodeInput) return;
     
-    if (isAnonymous) {
-      authorInput.disabled = true;
-      authorInput.placeholder = "Анонимный пользователь";
-      authorInput.value = "";
-    } else {
-      authorInput.disabled = false;
-      authorInput.placeholder = "Ваше имя (необязательно)";
-    }
-  });
-
-  // Обработка выбора файлов
-  fileInput.addEventListener('change', async function(e) {
-    const files = Array.from(e.target.files);
-    
-    if (selectedFiles.length + files.length > MAX_FILES) {
-      showNotification('error', 'Ошибка', `Максимум ${MAX_FILES} фото`);
-      this.value = '';
+    const code = schoolCodeInput.value.trim();
+    if (code !== SCHOOL_ACCESS_CODE) {
+      showNotification('error', 'Ошибка доступа', 'Неверный код доступа школы');
       return;
     }
-    
-    for (const file of files) {
-      if (!file.type.startsWith('image/')) {
-        showNotification('error', 'Ошибка', 'Только изображения');
-        continue;
-      }
-      
-      if (file.size > MAX_FILE_SIZE) {
-        showNotification('error', 'Ошибка', `Файл должен быть меньше 2 МБ`);
-        continue;
-      }
-      
-      try {
-        const base64Data = await fileToBase64(file);
-        
-        const fileId = Date.now() + Math.random().toString(36).substr(2, 9);
-        selectedFiles.push({
-          id: fileId,
-          base64: base64Data,
-          name: file.name,
-          size: file.size,
-          type: file.type
-        });
-        
-      } catch (error) {
-        console.error('Ошибка чтения файла:', error);
-        showNotification('error', 'Ошибка', 'Не удалось прочитать файл');
-      }
+    localStorage.setItem('school18_access', 'true');
+    accessScreen.classList.add('hidden');
+    forum.classList.remove('hidden');
+    showNotification('success', 'Добро пожаловать!', 'Вы успешно вошли на форум');
+    loadData(); // Загружаем данные после входа
+  }
+
+  // Проверка доступа при загрузке
+  document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('school18_access') === 'true') {
+      accessScreen.classList.add('hidden');
+      forum.classList.remove('hidden');
+      loadData(); // Загружаем данные при наличии доступа
     }
     
-    updateFilePreview();
-    this.value = '';
+    // Фокус на поле ввода кода
+    const schoolCodeInput = document.getElementById('schoolCode');
+    if (schoolCodeInput) {
+      schoolCodeInput.focus();
+    }
+    
+    // Проверка админ-сессии
+    if (localStorage.getItem('school18_admin') === 'true') {
+      isAdmin = true;
+      if (adminAuthBtn) {
+        adminAuthBtn.innerHTML = `
+          <span class="admin-badge">
+            <i class="fas fa-crown"></i> Модератор
+          </span>
+        `;
+        adminAuthBtn.onclick = adminLogout;
+      }
+      if (changelogAddBtn) changelogAddBtn.classList.remove('hidden');
+      if (notificationBtn) notificationBtn.classList.remove('hidden');
+    }
   });
 
+  // Загрузка данных
+  function loadData() {
+    // Загрузка постов
+    if (postsRef && postsDiv) {
+      postsRef.on('value', snap => {
+        postsDiv.innerHTML = '';
+        const data = snap.val();
+        
+        if (!data || Object.keys(data).length === 0) {
+          postsDiv.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-comments"></i>
+              <h3>Пока нет сообщений</h3>
+              <p>Будьте первым, кто поделится новостью или вопросом!</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Создание массива постов с ключами
+        const postsArray = Object.entries(data).map(([key, value]) => ({
+          id: key,
+          ...value
+        }));
+        
+        // Сортировка по дате (новые сначала)
+        postsArray.sort((a, b) => {
+          return (b.timestamp || 0) - (a.timestamp || 0);
+        });
+        
+        // Отображение постов
+        postsArray.forEach(post => {
+          const div = document.createElement('div');
+          div.className = 'post';
+          div.dataset.id = post.id;
+          
+          // Определение типа автора
+          const isPostAnonymous = post.author === 'Аноним' || !post.author || post.isAnonymous;
+          const firstLetter = isPostAnonymous ? '?' : (post.author ? post.author.charAt(0).toUpperCase() : '?');
+          const avatarClass = isPostAnonymous ? 'anonymous-avatar' : 'user-avatar';
+          const authorName = isPostAnonymous ? 'Аноним' : (post.author || 'Аноним');
+          
+          // Получение и форматирование даты
+          let displayDate = post.date || '';
+          if (post.timestamp) {
+            const postDate = new Date(post.timestamp);
+            const now = new Date();
+            const diffMs = now - postDate;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) displayDate = 'Только что';
+            else if (diffMins < 60) displayDate = `${diffMins} мин. назад`;
+            else if (diffHours < 24) displayDate = `${diffHours} ч. назад`;
+            else if (diffDays < 7) displayDate = `${diffDays} дн. назад`;
+            else displayDate = postDate.toLocaleDateString('ru-RU');
+          }
+          
+          // Определение класса для бейджа
+          const classBadgeText = post.class || 'Класс не указан';
+          const classBadgeClass = post.class ? 'class-badge' : 'class-badge no-class-badge';
+          
+          // Отображение медиа файлов
+          let mediaContent = '';
+          if (post.images && post.images.length > 0) {
+            mediaContent += '<div class="media-content">';
+            post.images.forEach((image, index) => {
+              if (image && image.base64) {
+                mediaContent += `
+                  <div class="media-item">
+                    <img src="${image.base64}" alt="Изображение ${index + 1}" class="post-image" onclick="showImageModal('${image.base64.replace(/'/g, "\\'")}')" />
+                  </div>
+                `;
+              }
+            });
+            mediaContent += '</div>';
+          }
+          
+          div.innerHTML = `
+            <div class="post-header">
+              <div class="post-author">
+                <div class="author-avatar ${avatarClass}">${firstLetter}</div>
+                <div class="author-info">
+                  <h4>${authorName}</h4>
+                  <div class="author-meta">
+                    <span class="${classBadgeClass}">${classBadgeText}</span>
+                    <span class="post-date"><i class="far fa-clock"></i> ${displayDate}</span>
+                  </div>
+                </div>
+              </div>
+              ${isAdmin ? `
+                <div class="post-actions">
+                  <button class="delete-btn" onclick="showDeleteModal('${post.id}')">
+                    <i class="fas fa-trash-alt"></i> Удалить
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+            <div class="post-content">${post.text || ''}</div>
+            ${mediaContent}
+          `;
+          postsDiv.appendChild(div);
+        });
+      }, error => {
+        console.error("Ошибка загрузки постов:", error);
+        postsDiv.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Ошибка загрузки</h3>
+            <p>Не удалось загрузить сообщения. Проверьте подключение к интернету.</p>
+          </div>
+        `;
+      });
+    }
+
+    // Загрузка changelogs
+    if (changelogsRef && changelogList) {
+      changelogsRef.on('value', snap => {
+        changelogList.innerHTML = '';
+        const data = snap.val();
+        
+        if (!data || Object.keys(data).length === 0) {
+          changelogList.innerHTML = `
+            <div class="changelog-empty">
+              <i class="fas fa-history"></i>
+              <h4>Нет обновлений</h4>
+              <p>Здесь будут появляться важные объявления</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Создание массива changelogs с ключами
+        const changelogsArray = Object.entries(data).map(([key, value]) => ({
+          id: key,
+          ...value
+        }));
+        
+        // Сортировка по дате (новые сначала)
+        changelogsArray.sort((a, b) => {
+          return (b.timestamp || 0) - (a.timestamp || 0);
+        });
+        
+        // Отображение changelogs
+        changelogsArray.forEach(changelog => {
+          const div = document.createElement('div');
+          div.className = 'changelog-item';
+          div.dataset.id = changelog.id;
+          
+          // Форматирование даты
+          let displayDate = changelog.date || '';
+          if (changelog.timestamp) {
+            const changelogDate = new Date(changelog.timestamp);
+            const now = new Date();
+            const diffMs = now - changelogDate;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) displayDate = 'Только что';
+            else if (diffMins < 60) displayDate = `${diffMins} мин. назад`;
+            else if (diffHours < 24) displayDate = `${diffHours} ч. назад`;
+            else if (diffDays < 7) displayDate = `${diffDays} дн. назад`;
+            else displayDate = changelogDate.toLocaleDateString('ru-RU');
+          }
+          
+          div.innerHTML = `
+            <div class="changelog-item-header">
+              <div class="changelog-author">
+                <i class="fas fa-user-crown"></i>
+                ${changelog.author || 'Модератор'}
+              </div>
+              <div style="display: flex; align-items: center;">
+                <span class="changelog-date">${displayDate}</span>
+                ${isAdmin ? `
+                  <button class="changelog-delete-btn" onclick="deleteChangelog('${changelog.id}')">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+            <div class="changelog-message">${changelog.message || ''}</div>
+          `;
+          changelogList.appendChild(div);
+        });
+      }, error => {
+        console.error("Ошибка загрузки changelogs:", error);
+        changelogList.innerHTML = `
+          <div class="changelog-empty">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h4>Ошибка загрузки</h4>
+            <p>Не удалось загрузить обновления</p>
+          </div>
+        `;
+      });
+    }
+
+    // Проверка объявлений
+    if (broadcastRef) {
+      broadcastRef.once('value', snap => {
+        const data = snap.val();
+        if (data && data.message && data.active) {
+          const lastSeen = localStorage.getItem('lastBroadcastId');
+          if (lastSeen !== data.id) {
+            showFullscreenNotification(data.message);
+            localStorage.setItem('lastBroadcastId', data.id);
+          }
+        }
+      }, error => {
+        console.error("Ошибка загрузки объявлений:", error);
+      });
+    }
+  }
+
+  // Переключение анонимного режима
+  if (anonymousToggle && authorInput) {
+    anonymousToggle.addEventListener('click', function() {
+      isAnonymous = !isAnonymous;
+      this.classList.toggle('active', isAnonymous);
+      
+      if (isAnonymous) {
+        authorInput.disabled = true;
+        authorInput.placeholder = "Анонимный пользователь";
+        authorInput.value = "";
+      } else {
+        authorInput.disabled = false;
+        authorInput.placeholder = "Ваше имя (необязательно)";
+      }
+    });
+  }
+
+  // Обработка выбора файлов
+  if (fileInput) {
+    fileInput.addEventListener('change', async function(e) {
+      const files = Array.from(e.target.files || []);
+      
+      if (selectedFiles.length + files.length > MAX_FILES) {
+        showNotification('error', 'Ошибка', `Максимум ${MAX_FILES} фото`);
+        this.value = '';
+        return;
+      }
+      
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) {
+          showNotification('error', 'Ошибка', 'Только изображения');
+          continue;
+        }
+        
+        if (file.size > MAX_FILE_SIZE) {
+          showNotification('error', 'Ошибка', `Файл должен быть меньше 2 МБ`);
+          continue;
+        }
+        
+        try {
+          const base64Data = await fileToBase64(file);
+          
+          const fileId = Date.now() + Math.random().toString(36).substr(2, 9);
+          selectedFiles.push({
+            id: fileId,
+            base64: base64Data,
+            name: file.name,
+            size: file.size,
+            type: file.type
+          });
+          
+        } catch (error) {
+          console.error('Ошибка чтения файла:', error);
+          showNotification('error', 'Ошибка', 'Не удалось прочитать файл');
+        }
+      }
+      
+      updateFilePreview();
+      this.value = '';
+    });
+  }
+
+  // Конвертация файла в Base64
   function fileToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -2263,7 +2391,10 @@
     });
   }
 
+  // Обновление превью файлов
   function updateFilePreview() {
+    if (!filePreview) return;
+    
     filePreview.innerHTML = '';
     
     if (selectedFiles.length === 0) {
@@ -2292,11 +2423,13 @@
     });
   }
 
-  function removeFile(fileId) {
+  // Удаление файла из списка
+  window.removeFile = function(fileId) {
     selectedFiles = selectedFiles.filter(file => file.id !== fileId);
     updateFilePreview();
   }
 
+  // Форматирование размера файла
   function formatFileSize(bytes) {
     if (bytes === 0) return '0 Б';
     const k = 1024;
@@ -2305,56 +2438,312 @@
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   }
 
-  function showImageModal(imageSrc) {
-    modalImage.src = imageSrc;
-    showModal(imageModal);
-  }
-
-  function hideImageModal() {
-    hideModal(imageModal);
-  }
-
-  function showChangelogForm() {
-    changelogForm.classList.remove('hidden');
-    changelogMessage.focus();
-  }
-
-  function hideChangelogForm() {
-    changelogForm.classList.add('hidden');
-    changelogMessage.value = '';
-  }
-
-  // Загрузка постов и changelogs (сокращённая версия - добавьте полную из предыдущего кода)
-  postsRef.on('value', snap => {
-    // ... код загрузки постов ...
-  });
-
-  changelogsRef.on('value', snap => {
-    // ... код загрузки changelogs ...
-  });
-
+  // Добавление поста
   async function addPost() {
-    // ... код добавления поста ...
+    const author = isAnonymous ? 'Аноним' : (document.getElementById('author')?.value.trim() || '');
+    const code = document.getElementById('classCode')?.value.trim() || '';
+    const text = document.getElementById('text')?.value.trim() || '';
+
+    // Проверка обязательных полей
+    if (!text && selectedFiles.length === 0) {
+      showNotification('error', 'Ошибка', 'Добавьте текст или фото');
+      return;
+    }
+
+    // Определение класса
+    let className = '';
+    if (code) {
+      className = classCodes[code] || code;
+    }
+
+    // Блокировка кнопки на время отправки
+    if (publishBtn) {
+      publishBtn.disabled = true;
+      publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Публикация...';
+    }
+
+    try {
+      // Подготовка данных
+      const images = selectedFiles.map(file => ({
+        base64: file.base64,
+        name: file.name,
+        type: file.type,
+        size: file.size
+      }));
+
+      // Данные поста
+      const postData = {
+        author: author || 'Аноним',
+        class: className,
+        text,
+        date: new Date().toLocaleString('ru-RU'),
+        timestamp: Date.now(),
+        isAnonymous: isAnonymous || !author
+      };
+
+      // Добавляем изображения если есть
+      if (images.length > 0) {
+        postData.images = images;
+      }
+
+      // Сохранение поста
+      if (postsRef) {
+        await postsRef.push(postData);
+      } else {
+        throw new Error("Firebase не инициализирован");
+      }
+
+      // Сброс формы
+      if (!isAnonymous && authorInput) {
+        authorInput.value = '';
+      }
+      const classCodeInput = document.getElementById('classCode');
+      if (classCodeInput) classCodeInput.value = '';
+      const textInput = document.getElementById('text');
+      if (textInput) textInput.value = '';
+      
+      selectedFiles = [];
+      updateFilePreview();
+      
+      showNotification('success', 'Успешно!', 'Сообщение опубликовано');
+      
+      // Прокрутка к верху
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+    } catch (error) {
+      console.error('Ошибка добавления поста:', error);
+      showNotification('error', 'Ошибка', 'Не удалось опубликовать сообщение');
+    } finally {
+      // Сброс кнопки
+      if (publishBtn) {
+        publishBtn.disabled = false;
+        publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Опубликовать';
+      }
+    }
   }
 
+  // Добавление changelog
   async function addChangelog() {
-    // ... код добавления changelog ...
+    if (!changelogMessage) return;
+    
+    const message = changelogMessage.value.trim();
+
+    if (!message) {
+      showNotification('error', 'Ошибка', 'Введите сообщение об обновлении');
+      return;
+    }
+
+    try {
+      const changelogData = {
+        author: 'Модератор',
+        message,
+        date: new Date().toLocaleString('ru-RU'),
+        timestamp: Date.now()
+      };
+
+      if (changelogsRef) {
+        await changelogsRef.push(changelogData);
+      } else {
+        throw new Error("Firebase не инициализирован");
+      }
+
+      hideChangelogForm();
+      showNotification('success', 'Успешно!', 'Обновление добавлено');
+      
+    } catch (error) {
+      console.error('Ошибка добавления changelog:', error);
+      showNotification('error', 'Ошибка', 'Не удалось добавить обновление');
+    }
   }
 
-  async function deleteChangelog(changelogId) {
-    // ... код удаления changelog ...
+  // Удаление changelog
+  window.deleteChangelog = async function(changelogId) {
+    if (!isAdmin || !changelogId) return;
+    
+    try {
+      if (db) {
+        await db.ref('changelogs/' + changelogId).remove();
+        showNotification('success', 'Удалено', 'Обновление удалено');
+      }
+    } catch (error) {
+      console.error('Ошибка удаления changelog:', error);
+      showNotification('error', 'Ошибка', 'Не удалось удалить обновление');
+    }
   }
 
-  function showDeleteModal(postId) {
-    // ... код показа модалки удаления ...
+  // Отправка объявления
+  async function sendBroadcast() {
+    if (!broadcastMessage) return;
+    
+    const message = broadcastMessage.value.trim();
+    
+    if (!message) {
+      showNotification('error', 'Ошибка', 'Введите текст объявления');
+      return;
+    }
+    
+    try {
+      const broadcastData = {
+        id: Date.now().toString(),
+        message: message,
+        active: true,
+        timestamp: Date.now(),
+        author: isAdmin ? 'Модератор' : 'Администрация'
+      };
+      
+      if (broadcastRef) {
+        await broadcastRef.set(broadcastData);
+      } else {
+        throw new Error("Firebase не инициализирован");
+      }
+      
+      hideBroadcastModal();
+      showNotification('success', 'Успешно!', 'Объявление отправлено всем пользователям');
+      
+    } catch (error) {
+      console.error('Ошибка отправки объявления:', error);
+      showNotification('error', 'Ошибка', 'Не удалось отправить объявление');
+    }
+  }
+
+  // АДМИН ФУНКЦИИ
+  function showAdminAuth() {
+    showModal(adminAuthModal);
+    const adminPasswordInput = document.getElementById('adminPassword');
+    if (adminPasswordInput) adminPasswordInput.focus();
+  }
+
+  function hideAdminAuth() {
+    hideModal(adminAuthModal);
+    const adminPasswordInput = document.getElementById('adminPassword');
+    if (adminPasswordInput) adminPasswordInput.value = '';
+  }
+
+  function adminLogin() {
+    const adminPasswordInput = document.getElementById('adminPassword');
+    if (!adminPasswordInput) return;
+    
+    const password = adminPasswordInput.value.trim();
+    if (password === ADMIN_PASSWORD) {
+      isAdmin = true;
+      localStorage.setItem('school18_admin', 'true');
+      
+      if (adminAuthBtn) {
+        adminAuthBtn.innerHTML = `
+          <span class="admin-badge">
+            <i class="fas fa-crown"></i> Модератор
+          </span>
+        `;
+        adminAuthBtn.onclick = adminLogout;
+      }
+      
+      // Показать кнопки для модератора
+      if (changelogAddBtn) changelogAddBtn.classList.remove('hidden');
+      if (notificationBtn) notificationBtn.classList.remove('hidden');
+      
+      hideAdminAuth();
+      showNotification('success', 'Успешно', 'Вы вошли как модератор');
+    } else {
+      showNotification('error', 'Ошибка', 'Неверный пароль');
+    }
+  }
+
+  function adminLogout() {
+    isAdmin = false;
+    localStorage.removeItem('school18_admin');
+    
+    if (adminAuthBtn) {
+      adminAuthBtn.innerHTML = `
+        <i class="fas fa-user-shield"></i>
+        Модерация
+      `;
+      adminAuthBtn.onclick = showAdminAuth;
+    }
+    
+    // Скрыть кнопки для модератора
+    if (changelogAddBtn) changelogAddBtn.classList.add('hidden');
+    if (notificationBtn) notificationBtn.classList.add('hidden');
+    hideChangelogForm();
+    
+    showNotification('info', 'Выход', 'Вы вышли из режима модератора');
+  }
+
+  // УДАЛЕНИЕ ПОСТОВ
+  window.showDeleteModal = function(postId) {
+    if (!isAdmin) {
+      showNotification('error', 'Доступ запрещен', 'Требуется авторизация модератора');
+      return;
+    }
+    postToDelete = postId;
+    showModal(deleteModal);
   }
 
   function hideDeleteModal() {
-    // ... код скрытия модалки удаления ...
+    hideModal(deleteModal);
+    postToDelete = null;
   }
 
   async function confirmDelete() {
-    // ... код подтверждения удаления ...
+    if (!postToDelete || !isAdmin || !db) return;
+    
+    try {
+      await db.ref('posts/' + postToDelete).remove();
+      hideDeleteModal();
+      showNotification('success', 'Удалено', 'Сообщение удалено');
+    } catch (error) {
+      console.error('Ошибка удаления поста:', error);
+      showNotification('error', 'Ошибка', 'Не удалось удалить');
+    }
+  }
+
+  // Закрытие модалок по клику вне области
+  window.addEventListener('click', (e) => {
+    if (e.target === adminAuthModal) hideAdminAuth();
+    if (e.target === rulesModal) hideRules();
+    if (e.target === broadcastModal) hideBroadcastModal();
+    if (e.target === deleteModal) hideDeleteModal();
+    if (e.target === imageModal) hideImageModal();
+    if (e.target === fullscreenNotification) hideFullscreenNotification();
+  });
+
+  // Закрытие по Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      hideAdminAuth();
+      hideRules();
+      hideBroadcastModal();
+      hideDeleteModal();
+      hideImageModal();
+      hideChangelogForm();
+    }
+  });
+
+  // Автоматическое закрытие уведомления при клике
+  if (notification) {
+    notification.addEventListener('click', () => {
+      notification.classList.remove('show');
+      setTimeout(() => notification.classList.add('hidden'), 300);
+    });
+  }
+
+  // Валидация формы при вводе
+  const textInput = document.getElementById('text');
+  if (textInput && publishBtn) {
+    textInput.addEventListener('input', function() {
+      const hasText = this.value.trim().length > 0;
+      const hasFiles = selectedFiles.length > 0;
+      publishBtn.disabled = !hasText && !hasFiles;
+    });
+  }
+
+  // Валидация changelog формы
+  if (changelogMessage) {
+    changelogMessage.addEventListener('input', function() {
+      const submitBtn = document.querySelector('.changelog-submit-btn');
+      if (submitBtn) {
+        submitBtn.disabled = this.value.trim().length === 0;
+      }
+    });
   }
 </script>
 </body>
