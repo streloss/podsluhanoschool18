@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Firebase (без Storage пока) -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
@@ -184,7 +184,7 @@
     }
 
     header {
-      padding: 20px 5%;
+      padding: 15px 5%;
       background: rgba(15, 23, 42, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
@@ -200,24 +200,35 @@
     .logo-container {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
     }
 
     .logo {
-      width: 50px;
-      height: 50px;
+      width: 45px;
+      height: 45px;
       background: linear-gradient(135deg, var(--primary), var(--success));
-      border-radius: 50%;
+      border-radius: 12px; /* Изменено с 50% на 12px для овала */
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 20px;
+      font-size: 18px;
       color: white;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* На мобильных делаем логотип круглым */
+    @media (max-width: 768px) {
+      .logo {
+        border-radius: 50%; /* На мобильных - круг */
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
     }
 
     .logo-text h2 {
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 700;
       margin: 0;
       background: linear-gradient(90deg, var(--light-1), var(--light-3));
@@ -227,23 +238,34 @@
 
     .logo-text p {
       color: var(--light-3);
-      font-size: 14px;
-      margin: 3px 0 0;
+      font-size: 12px;
+      margin: 2px 0 0;
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .logo-text p {
+        display: block;
+      }
+      .logo-text h2 {
+        font-size: 20px;
+      }
     }
 
     .admin-auth-btn {
-      padding: 10px 20px;
+      padding: 8px 15px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
       background: rgba(30, 41, 59, 0.6);
       color: var(--light-2);
       cursor: pointer;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
       transition: var(--transition);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      white-space: nowrap;
     }
 
     .admin-auth-btn:hover {
@@ -255,59 +277,162 @@
     .admin-badge {
       background: linear-gradient(90deg, var(--success), #0d9488);
       color: white;
-      padding: 8px 16px;
+      padding: 6px 12px;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
     }
 
     main {
       max-width: 900px;
-      margin: 30px auto;
+      margin: 20px auto;
       padding: 0 5%;
       position: relative;
       z-index: 1;
+      padding-bottom: 80px; /* Место для плавающей кнопки */
     }
 
-    .new-post {
-      background: rgba(15, 23, 42, 0.8);
-      backdrop-filter: blur(10px);
+    /* Плавающая кнопка создания поста */
+    .floating-create-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .floating-create-btn:hover {
+      transform: translateY(-5px) scale(1.1);
+      box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .floating-create-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+      }
+    }
+
+    /* Модальное окно создания поста */
+    .create-post-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease;
+      padding: 20px;
+    }
+
+    .create-post-content {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 25px;
-      margin-bottom: 30px;
-      box-shadow: var(--shadow);
-      animation: slideIn 0.5s ease-out;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.4s ease-out;
       position: relative;
-      z-index: 1;
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
-    .new-post h3 {
-      font-size: 20px;
+    @keyframes slideUp {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .create-post-modal {
+        padding: 10px;
+        align-items: flex-end;
+      }
+      
+      .create-post-content {
+        max-width: 100%;
+        max-height: 85vh;
+      }
+    }
+
+    .create-post-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .create-post-header h3 {
+      font-size: 18px;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin: 0;
       display: flex;
       align-items: center;
       gap: 10px;
       color: var(--light-1);
     }
 
-    .new-post h3 i {
+    .create-post-header h3 i {
       color: var(--primary);
+    }
+
+    .create-post-body {
+      padding: 20px;
+    }
+
+    .create-post-close {
+      background: none;
+      border: none;
+      color: var(--light-3);
+      font-size: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .create-post-close:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--light-1);
     }
 
     .input-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 12px;
       margin-bottom: 15px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 480px) {
       .input-row {
         grid-template-columns: 1fr;
       }
@@ -315,30 +440,32 @@
 
     .input-group {
       position: relative;
+      margin-bottom: 12px;
     }
 
     .input-group i {
       position: absolute;
-      left: 15px;
+      left: 12px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--light-3);
       font-size: 16px;
+      z-index: 1;
     }
 
     input, textarea {
       width: 100%;
-      padding: 14px 14px 14px 45px;
+      padding: 12px 12px 12px 40px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
       background: rgba(30, 41, 59, 0.6);
       color: var(--light-1);
-      font-size: 15px;
+      font-size: 14px;
       transition: var(--transition);
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 100px;
       resize: vertical;
       font-family: 'Inter', sans-serif;
     }
@@ -359,7 +486,7 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 15px;
-      padding: 10px 15px;
+      padding: 10px 12px;
       background: rgba(30, 41, 59, 0.6);
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
@@ -377,10 +504,10 @@
     }
 
     .toggle-switch {
-      width: 44px;
-      height: 24px;
+      width: 40px;
+      height: 22px;
       background: var(--dark-3);
-      border-radius: 12px;
+      border-radius: 11px;
       position: relative;
       transition: var(--transition);
     }
@@ -392,8 +519,8 @@
     .toggle-switch::after {
       content: '';
       position: absolute;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       background: white;
       border-radius: 50%;
       top: 2px;
@@ -402,12 +529,13 @@
     }
 
     .anonymous-toggle.active .toggle-switch::after {
-      left: 22px;
+      left: 20px;
     }
 
     .toggle-label {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--light-2);
+      flex: 1;
     }
 
     /* Загрузка файлов */
@@ -418,15 +546,15 @@
     .file-upload-label {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 20px;
+      gap: 8px;
+      padding: 10px 15px;
       background: rgba(30, 41, 59, 0.6);
       border: 2px dashed var(--border);
       border-radius: var(--radius-sm);
       cursor: pointer;
       transition: var(--transition);
       color: var(--light-2);
-      font-size: 14px;
+      font-size: 13px;
       justify-content: center;
     }
 
@@ -436,7 +564,7 @@
     }
 
     .file-upload-label i {
-      font-size: 18px;
+      font-size: 16px;
     }
 
     #fileInput {
@@ -444,7 +572,7 @@
     }
 
     .file-preview {
-      margin-top: 15px;
+      margin-top: 12px;
       display: none;
     }
 
@@ -456,28 +584,28 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 15px;
+      padding: 8px 12px;
       background: rgba(30, 41, 59, 0.8);
       border-radius: var(--radius-sm);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       border: 1px solid var(--border);
     }
 
     .preview-info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex: 1;
     }
 
     .preview-icon {
       color: var(--primary);
-      font-size: 18px;
+      font-size: 16px;
     }
 
     .preview-name {
       color: var(--light-2);
-      font-size: 14px;
+      font-size: 13px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -486,21 +614,22 @@
 
     .preview-size {
       color: var(--light-3);
-      font-size: 12px;
+      font-size: 11px;
     }
 
     .remove-file {
       background: rgba(239, 68, 68, 0.1);
       border: none;
       color: var(--danger);
-      width: 30px;
-      height: 30px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: var(--transition);
+      font-size: 12px;
     }
 
     .remove-file:hover {
@@ -508,60 +637,32 @@
       color: white;
     }
 
-    .upload-progress {
-      margin-top: 10px;
-      display: none;
-    }
-
-    .upload-progress.active {
-      display: block;
-    }
-
-    .progress-bar {
-      height: 6px;
-      background: var(--dark-3);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 5px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--success));
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-
-    .progress-text {
-      text-align: center;
-      color: var(--light-3);
-      font-size: 12px;
-    }
-
     .form-actions {
       display: flex;
-      justify-content: flex-end;
+      gap: 10px;
       margin-top: 20px;
     }
 
     .publish-btn {
-      padding: 12px 28px;
+      padding: 12px 20px;
       border-radius: var(--radius-sm);
       border: none;
       background: linear-gradient(90deg, var(--primary), var(--primary-dark));
       color: white;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
       display: flex;
       align-items: center;
       gap: 8px;
+      flex: 1;
+      justify-content: center;
     }
 
     .publish-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
     }
 
     .publish-btn:disabled {
@@ -571,28 +672,52 @@
       box-shadow: none;
     }
 
+    .cancel-btn {
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(30, 41, 59, 0.6);
+      color: var(--light-2);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .cancel-btn:hover {
+      background: rgba(71, 85, 105, 0.6);
+    }
+
     .posts-container {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
     .empty-state {
       text-align: center;
-      padding: 50px 20px;
+      padding: 40px 20px;
       color: var(--light-3);
     }
 
     .empty-state i {
-      font-size: 48px;
+      font-size: 40px;
       margin-bottom: 15px;
       color: var(--dark-3);
     }
 
     .empty-state h3 {
-      font-size: 20px;
+      font-size: 18px;
       margin-bottom: 10px;
       color: var(--light-2);
+    }
+
+    .empty-state p {
+      font-size: 14px;
     }
 
     .post {
@@ -600,7 +725,7 @@
       backdrop-filter: blur(10px);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 25px;
+      padding: 20px;
       transition: var(--transition);
       animation: fadeIn 0.5s ease-out;
       position: relative;
@@ -618,39 +743,31 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
     .post-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
 
     .post-author {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      flex: 1;
     }
 
     .author-avatar {
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-weight: 600;
-      font-size: 16px;
+      font-size: 15px;
+      flex-shrink: 0;
     }
 
     .anonymous-avatar {
@@ -661,29 +778,39 @@
       background: linear-gradient(135deg, var(--primary), #8b5cf6);
     }
 
+    .author-info {
+      flex: 1;
+      min-width: 0;
+    }
+
     .author-info h4 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       color: var(--light-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .author-meta {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 13px;
+      gap: 8px;
+      font-size: 12px;
       color: var(--light-3);
+      flex-wrap: wrap;
     }
 
     .class-badge {
       background: rgba(59, 130, 246, 0.15);
       color: var(--primary);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
       font-weight: 600;
       border: 1px solid rgba(59, 130, 246, 0.3);
+      white-space: nowrap;
     }
 
     .no-class-badge {
@@ -694,62 +821,64 @@
 
     .post-date {
       color: var(--light-3);
-      font-size: 13px;
+      font-size: 12px;
+      white-space: nowrap;
     }
 
     .post-actions {
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .delete-btn {
-      padding: 6px 14px;
+      padding: 5px 10px;
       border-radius: var(--radius-sm);
       border: none;
       background: rgba(239, 68, 68, 0.1);
       color: var(--danger);
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 500;
       cursor: pointer;
       transition: var(--transition);
       display: flex;
       align-items: center;
-      gap: 6px;
-      position: relative;
-      z-index: 2;
+      gap: 4px;
+      white-space: nowrap;
     }
 
     .delete-btn:hover {
       background: var(--danger);
       color: white;
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2);
+      box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
     }
 
     .post-content {
       color: var(--light-2);
-      line-height: 1.7;
-      font-size: 15px;
+      line-height: 1.6;
+      font-size: 14px;
       white-space: pre-line;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
+      word-break: break-word;
     }
 
     /* Медиа контент */
     .media-content {
-      margin-top: 15px;
+      margin-top: 12px;
     }
 
     .media-item {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       border-radius: var(--radius-sm);
       overflow: hidden;
       max-width: 100%;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     }
 
     .post-image {
       max-width: 100%;
-      max-height: 400px;
+      max-height: 300px;
       display: block;
       border-radius: var(--radius-sm);
       cursor: pointer;
@@ -761,33 +890,11 @@
       transform: scale(1.02);
     }
 
-    .post-video {
-      max-width: 100%;
-      max-height: 400px;
-      display: block;
-      border-radius: var(--radius-sm);
-    }
-
-    .media-placeholder {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 15px;
-      background: rgba(30, 41, 59, 0.6);
-      border-radius: var(--radius-sm);
-      color: var(--light-3);
-    }
-
-    .media-placeholder i {
-      font-size: 24px;
-      color: var(--primary);
-    }
-
     footer {
       text-align: center;
-      padding: 25px;
+      padding: 20px;
       color: var(--light-3);
-      font-size: 14px;
+      font-size: 13px;
       border-top: 1px solid var(--border);
       margin-top: 40px;
       background: rgba(15, 23, 42, 0.8);
@@ -806,26 +913,27 @@
     @media (max-width: 768px) {
       .footer-content {
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
       }
     }
 
     .footer-links {
       display: flex;
-      gap: 20px;
+      gap: 15px;
     }
 
     .footer-links a {
       color: var(--light-3);
       text-decoration: none;
       transition: var(--transition);
+      font-size: 12px;
     }
 
     .footer-links a:hover {
       color: var(--primary);
     }
 
-    /* MODAL */
+    /* Остальные модалки */
     .modal {
       position: fixed;
       top: 0;
@@ -848,13 +956,13 @@
       backdrop-filter: blur(20px);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 30px;
+      padding: 25px;
       width: 100%;
-      max-width: 500px;
+      max-width: 450px;
       box-shadow: var(--shadow-lg);
       animation: fadeInUp 0.4s ease-out;
       position: relative;
-      max-height: 90vh;
+      max-height: 80vh;
       overflow-y: auto;
       z-index: 10001;
     }
@@ -883,16 +991,16 @@
 
     .modal-close {
       position: absolute;
-      top: 20px;
-      right: 20px;
+      top: 15px;
+      right: 15px;
       background: rgba(0,0,0,0.5);
       border: none;
       color: white;
-      font-size: 24px;
+      font-size: 20px;
       cursor: pointer;
       transition: var(--transition);
-      width: 40px;
-      height: 40px;
+      width: 35px;
+      height: 35px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -905,7 +1013,7 @@
     }
 
     .modal-content h3 {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 600;
       margin-bottom: 15px;
       color: var(--light-1);
@@ -919,28 +1027,29 @@
       color: var(--light-3);
       margin-bottom: 20px;
       line-height: 1.6;
+      font-size: 14px;
     }
 
     .modal-actions {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       justify-content: flex-end;
-      margin-top: 25px;
+      margin-top: 20px;
       flex-wrap: wrap;
     }
 
     .modal-btn {
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: var(--radius-sm);
       border: none;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       transition: var(--transition);
       display: flex;
       align-items: center;
       gap: 8px;
-      min-width: 120px;
+      min-width: 100px;
       justify-content: center;
     }
 
@@ -961,18 +1070,18 @@
 
     .modal-confirm:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2);
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
     }
 
     .modal-input {
       width: 100%;
-      padding: 14px 20px;
+      padding: 12px 16px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
       background: rgba(30, 41, 59, 0.8);
       color: var(--light-1);
-      font-size: 15px;
-      margin-bottom: 20px;
+      font-size: 14px;
+      margin-bottom: 15px;
       transition: var(--transition);
     }
 
@@ -988,7 +1097,7 @@
 
     /* SCROLLBAR */
     ::-webkit-scrollbar {
-      width: 10px;
+      width: 8px;
     }
 
     ::-webkit-scrollbar-track {
@@ -997,7 +1106,7 @@
 
     ::-webkit-scrollbar-thumb {
       background: var(--dark-3);
-      border-radius: 5px;
+      border-radius: 4px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
@@ -1009,12 +1118,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 40px;
+      padding: 30px;
     }
 
     .spinner {
-      width: 40px;
-      height: 40px;
+      width: 35px;
+      height: 35px;
       border: 3px solid var(--dark-3);
       border-top-color: var(--primary);
       border-radius: 50%;
@@ -1028,9 +1137,9 @@
     /* NOTIFICATION */
     .notification {
       position: fixed;
-      top: 90px;
-      right: 20px;
-      padding: 15px 25px;
+      top: 80px;
+      right: 15px;
+      padding: 12px 20px;
       border-radius: var(--radius-sm);
       background: rgba(15, 23, 42, 0.98);
       border: 1px solid var(--border);
@@ -1038,10 +1147,10 @@
       z-index: 9999;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       transform: translateX(150%);
       transition: transform 0.3s ease;
-      max-width: 400px;
+      max-width: 350px;
       backdrop-filter: blur(10px);
     }
 
@@ -1062,7 +1171,7 @@
     }
 
     .notification i {
-      font-size: 20px;
+      font-size: 18px;
     }
 
     .notification.success i { color: var(--success); }
@@ -1070,13 +1179,13 @@
     .notification.info i { color: var(--primary); }
 
     .notification-content h4 {
-      font-size: 14px;
-      margin-bottom: 4px;
+      font-size: 13px;
+      margin-bottom: 3px;
       color: var(--light-1);
     }
 
     .notification-content p {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--light-3);
     }
 
@@ -1088,8 +1197,9 @@
       }
       
       .modal-content {
-        margin-top: 60px;
-        max-height: calc(100vh - 100px);
+        margin-top: 50px;
+        max-height: calc(100vh - 80px);
+        padding: 20px;
       }
       
       .modal-actions {
@@ -1101,7 +1211,7 @@
       }
       
       .notification {
-        top: 80px;
+        top: 70px;
         right: 10px;
         left: 10px;
         max-width: none;
@@ -1110,16 +1220,43 @@
       .post-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 15px;
+        gap: 12px;
       }
       
       .post-actions {
         align-self: flex-end;
       }
       
-      .post-image,
-      .post-video {
-        max-height: 300px;
+      .post-image {
+        max-height: 250px;
+      }
+      
+      main {
+        padding: 0 4%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 12px 4%;
+      }
+      
+      .admin-auth-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+      
+      .post {
+        padding: 15px;
+      }
+      
+      .create-post-modal {
+        padding: 0;
+      }
+      
+      .create-post-content {
+        border-radius: var(--radius) var(--radius) 0 0;
+        max-height: 90vh;
       }
     }
   </style>
@@ -1158,14 +1295,45 @@
     
     <button id="adminAuthBtn" class="admin-auth-btn" onclick="showAdminAuth()">
       <i class="fas fa-user-shield"></i>
-      Авторизация для модерации
+      Модерация
     </button>
   </header>
 
   <main>
-    <div class="new-post">
-      <h3><i class="fas fa-plus-circle"></i> Создать новое сообщение</h3>
-      
+    <div id="posts" class="posts-container">
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Плавающая кнопка создания поста -->
+  <button class="floating-create-btn" id="floatingCreateBtn">
+    <i class="fas fa-plus"></i>
+  </button>
+
+  <footer>
+    <div class="footer-content">
+      <div>© 2024 МБОУ СОШ №18 • Закрытый форум</div>
+      <div class="footer-links">
+        <a href="#"><i class="fas fa-shield-alt"></i> Конфиденциальность</a>
+        <a href="#"><i class="fas fa-info-circle"></i> Правила</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Модальное окно создания поста -->
+<div id="createPostModal" class="create-post-modal hidden">
+  <div class="create-post-content">
+    <div class="create-post-header">
+      <h3><i class="fas fa-plus-circle"></i> Новое сообщение</h3>
+      <button class="create-post-close" onclick="hideCreatePostModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="create-post-body">
       <div class="anonymous-toggle" id="anonymousToggle">
         <div class="toggle-switch"></div>
         <div class="toggle-label">
@@ -1180,7 +1348,7 @@
         </div>
         <div class="input-group">
           <i class="fas fa-graduation-cap"></i>
-          <input id="classCode" placeholder="Код класса (необязательно, например 8A-18)" />
+          <input id="classCode" placeholder="Класс (например 8A-18)" />
         </div>
       </div>
       
@@ -1192,56 +1360,35 @@
       <!-- Загрузка файлов -->
       <div class="file-upload-section">
         <label for="fileInput" class="file-upload-label">
-          <i class="fas fa-paperclip"></i>
-          <span>Прикрепить фото или видео (до 2 МБ)</span>
+          <i class="fas fa-camera"></i>
+          <span>Добавить фото (до 2 МБ)</span>
         </label>
         <input type="file" id="fileInput" accept="image/*" capture="environment" />
         
         <div id="filePreview" class="file-preview"></div>
-        
-        <div id="uploadProgress" class="upload-progress">
-          <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-          </div>
-          <div class="progress-text" id="progressText">0%</div>
-        </div>
       </div>
       
       <div class="form-actions">
+        <button class="cancel-btn" onclick="hideCreatePostModal()">
+          <i class="fas fa-times"></i> Отмена
+        </button>
         <button class="publish-btn" id="publishBtn" onclick="addPost()">
-          <i class="fas fa-paper-plane"></i>
-          Опубликовать
+          <i class="fas fa-paper-plane"></i> Отправить
         </button>
       </div>
     </div>
-
-    <div id="posts" class="posts-container">
-      <div class="loading">
-        <div class="spinner"></div>
-      </div>
-    </div>
-  </main>
-
-  <footer>
-    <div class="footer-content">
-      <div>© 2024 МБОУ СОШ №18 • Закрытый форум</div>
-      <div class="footer-links">
-        <a href="#"><i class="fas fa-shield-alt"></i> Конфиденциальность</a>
-        <a href="#"><i class="fas fa-info-circle"></i> Правила</a>
-      </div>
-    </div>
-  </footer>
+  </div>
 </div>
 
-<!-- ADMIN AUTH MODAL -->
+<!-- АДМИН МОДАЛКИ -->
 <div id="adminAuthModal" class="modal hidden">
   <div class="modal-content">
     <button class="modal-close" onclick="hideAdminAuth()">
       <i class="fas fa-times"></i>
     </button>
     <h3><i class="fas fa-user-shield"></i> Авторизация модератора</h3>
-    <p>Введите пароль администратора для доступа к функциям модерации:</p>
-    <input type="password" id="adminPassword" class="modal-input" placeholder="Пароль администратора" />
+    <p>Введите пароль администратора:</p>
+    <input type="password" id="adminPassword" class="modal-input" placeholder="Пароль" />
     <div class="modal-actions">
       <button class="modal-btn modal-cancel" onclick="hideAdminAuth()">
         <i class="fas fa-times"></i> Отмена
@@ -1253,14 +1400,13 @@
   </div>
 </div>
 
-<!-- DELETE CONFIRM MODAL -->
 <div id="deleteModal" class="modal hidden">
   <div class="modal-content">
     <button class="modal-close" onclick="hideDeleteModal()">
       <i class="fas fa-times"></i>
     </button>
     <h3><i class="fas fa-exclamation-triangle"></i> Подтверждение удаления</h3>
-    <p>Вы уверены, что хотите удалить это сообщение? Это действие нельзя отменить.</p>
+    <p>Вы уверены, что хотите удалить это сообщение?</p>
     <div class="modal-actions">
       <button class="modal-btn modal-cancel" onclick="hideDeleteModal()">
         <i class="fas fa-times"></i> Отмена
@@ -1272,7 +1418,6 @@
   </div>
 </div>
 
-<!-- IMAGE MODAL -->
 <div id="imageModal" class="modal image-modal hidden">
   <div class="modal-content image-modal-content">
     <button class="modal-close" onclick="hideImageModal()">
@@ -1282,7 +1427,6 @@
   </div>
 </div>
 
-<!-- NOTIFICATION -->
 <div id="notification" class="notification hidden">
   <i id="notificationIcon"></i>
   <div class="notification-content">
@@ -1295,8 +1439,8 @@
   // 🔐 КОДЫ ДОСТУПА
   const SCHOOL_ACCESS_CODE = "LISTEN18";
   const ADMIN_PASSWORD = "ADMIN18_MOD";
-  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 МБ (меньше для Base64)
-  const MAX_FILES = 3; // Максимум 3 файла (Base64 занимает много места)
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 МБ
+  const MAX_FILES = 3;
 
   // Текущий контекст
   let isAdmin = false;
@@ -1311,6 +1455,8 @@
   const adminAuthModal = document.getElementById('adminAuthModal');
   const deleteModal = document.getElementById('deleteModal');
   const imageModal = document.getElementById('imageModal');
+  const createPostModal = document.getElementById('createPostModal');
+  const floatingCreateBtn = document.getElementById('floatingCreateBtn');
   const postsDiv = document.getElementById('posts');
   const notification = document.getElementById('notification');
   const anonymousToggle = document.getElementById('anonymousToggle');
@@ -1318,9 +1464,6 @@
   const publishBtn = document.getElementById('publishBtn');
   const fileInput = document.getElementById('fileInput');
   const filePreview = document.getElementById('filePreview');
-  const uploadProgress = document.getElementById('uploadProgress');
-  const progressFill = document.getElementById('progressFill');
-  const progressText = document.getElementById('progressText');
   const modalImage = document.getElementById('modalImage');
   const body = document.body;
 
@@ -1362,6 +1505,22 @@
   function hideModal(modal) {
     modal.classList.add('hidden');
     body.style.overflow = '';
+  }
+
+  function showCreatePostModal() {
+    showModal(createPostModal);
+  }
+
+  function hideCreatePostModal() {
+    hideModal(createPostModal);
+    // Сброс формы
+    if (!isAnonymous) {
+      document.getElementById('author').value = '';
+    }
+    document.getElementById('classCode').value = '';
+    document.getElementById('text').value = '';
+    selectedFiles = [];
+    updateFilePreview();
   }
 
   function showImageModal(imageSrc) {
@@ -1408,13 +1567,13 @@
   function enterForum() {
     const code = document.getElementById('schoolCode').value.trim();
     if (code !== SCHOOL_ACCESS_CODE) {
-      showNotification('error', 'Ошибка доступа', 'Неверный код доступа школы');
+      showNotification('error', 'Ошибка доступа', 'Неверный код доступа');
       return;
     }
     localStorage.setItem('school18_access', 'true');
     accessScreen.classList.add('hidden');
     forum.classList.remove('hidden');
-    showNotification('success', 'Добро пожаловать!', 'Вы успешно вошли на форум');
+    showNotification('success', 'Добро пожаловать!', 'Вы вошли на форум');
   }
 
   // Проверка доступа при загрузке
@@ -1422,6 +1581,9 @@
     accessScreen.classList.add('hidden');
     forum.classList.remove('hidden');
   }
+
+  // Кнопка создания поста
+  floatingCreateBtn.addEventListener('click', showCreatePostModal);
 
   // Переключение анонимного режима
   anonymousToggle.addEventListener('click', function() {
@@ -1432,11 +1594,9 @@
       authorInput.disabled = true;
       authorInput.placeholder = "Анонимный пользователь";
       authorInput.value = "";
-      showNotification('info', 'Анонимный режим', 'Ваше сообщение будет опубликовано анонимно');
     } else {
       authorInput.disabled = false;
       authorInput.placeholder = "Ваше имя (необязательно)";
-      showNotification('info', 'Именной режим', 'Вы можете указать своё имя');
     }
   });
 
@@ -1446,34 +1606,24 @@
     
     // Проверка количества файлов
     if (selectedFiles.length + files.length > MAX_FILES) {
-      showNotification('error', 'Ошибка', `Максимум можно загрузить ${MAX_FILES} файла`);
+      showNotification('error', 'Ошибка', `Максимум ${MAX_FILES} фото`);
       this.value = '';
       return;
     }
     
-    // Проверка размера файлов
-    const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
-    if (oversizedFiles.length > 0) {
-      showNotification('error', 'Ошибка', `Файлы не должны превышать ${MAX_FILE_SIZE / 1024 / 1024} МБ`);
-      this.value = '';
-      return;
-    }
-    
-    // Добавление файлов
     for (const file of files) {
       if (!file.type.startsWith('image/')) {
-        showNotification('error', 'Ошибка', 'Поддерживаются только изображения (JPG, PNG, GIF)');
+        showNotification('error', 'Ошибка', 'Только изображения');
+        continue;
+      }
+      
+      if (file.size > MAX_FILE_SIZE) {
+        showNotification('error', 'Ошибка', `Файл должен быть меньше 2 МБ`);
         continue;
       }
       
       try {
         const base64Data = await fileToBase64(file);
-        
-        // Проверка размера Base64
-        if (base64Data.length > 3 * 1024 * 1024) { // ~3MB в Base64
-          showNotification('error', 'Ошибка', 'Изображение слишком большое. Выберите файл поменьше.');
-          continue;
-        }
         
         const fileId = Date.now() + Math.random().toString(36).substr(2, 9);
         selectedFiles.push({
@@ -1515,7 +1665,7 @@
     
     filePreview.classList.add('active');
     
-    selectedFiles.forEach((fileData, index) => {
+    selectedFiles.forEach((fileData) => {
       const fileSize = formatFileSize(fileData.size);
       
       const previewItem = document.createElement('div');
@@ -1544,7 +1694,7 @@
   function formatFileSize(bytes) {
     if (bytes === 0) return '0 Б';
     const k = 1024;
-    const sizes = ['Б', 'КБ', 'МБ', 'ГБ'];
+    const sizes = ['Б', 'КБ', 'МБ'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   }
@@ -1559,7 +1709,7 @@
         <div class="empty-state">
           <i class="fas fa-comments"></i>
           <h3>Пока нет сообщений</h3>
-          <p>Будьте первым, кто поделится новостью или вопросом!</p>
+          <p>Нажмите "+" чтобы создать первое сообщение</p>
         </div>
       `;
       return;
@@ -1658,7 +1808,7 @@
 
     // Проверка обязательных полей
     if (!text && selectedFiles.length === 0) {
-      showNotification('error', 'Ошибка', 'Добавьте текст сообщения или прикрепите изображение');
+      showNotification('error', 'Ошибка', 'Добавьте текст или фото');
       return;
     }
 
@@ -1670,7 +1820,7 @@
 
     // Блокировка кнопки на время отправки
     publishBtn.disabled = true;
-    publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Публикация...';
+    publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
 
     try {
       // Подготовка данных
@@ -1699,20 +1849,10 @@
       // Сохранение поста
       await postsRef.push(postData);
 
-      // Сброс формы
-      if (!isAnonymous) {
-        document.getElementById('author').value = '';
-      }
-      document.getElementById('classCode').value = '';
-      document.getElementById('text').value = '';
-      selectedFiles = [];
-      updateFilePreview();
+      // Закрытие модалки и сброс формы
+      hideCreatePostModal();
       
-      // Сброс кнопки
-      publishBtn.disabled = false;
-      publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Опубликовать';
-      
-      showNotification('success', 'Успешно!', 'Сообщение опубликовано');
+      showNotification('success', 'Успешно!', 'Сообщение отправлено');
       
       // Прокрутка к верху
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1720,9 +1860,9 @@
     } catch (error) {
       // Сброс кнопки при ошибке
       publishBtn.disabled = false;
-      publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Опубликовать';
+      publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить';
       
-      showNotification('error', 'Ошибка', 'Не удалось опубликовать сообщение');
+      showNotification('error', 'Ошибка', 'Не удалось отправить сообщение');
       console.error('Ошибка Firebase:', error);
     }
   }
@@ -1745,14 +1885,14 @@
       localStorage.setItem('school18_admin', 'true');
       adminAuthBtn.innerHTML = `
         <span class="admin-badge">
-          <i class="fas fa-crown"></i> Режим модератора
+          <i class="fas fa-crown"></i> Модератор
         </span>
       `;
       adminAuthBtn.onclick = adminLogout;
       hideAdminAuth();
-      showNotification('success', 'Успешная авторизация', 'Вы вошли как модератор');
+      showNotification('success', 'Успешно', 'Вы вошли как модератор');
     } else {
-      showNotification('error', 'Ошибка', 'Неверный пароль администратора');
+      showNotification('error', 'Ошибка', 'Неверный пароль');
     }
   }
 
@@ -1761,7 +1901,7 @@
     localStorage.removeItem('school18_admin');
     adminAuthBtn.innerHTML = `
       <i class="fas fa-user-shield"></i>
-      Авторизация для модерации
+      Модерация
     `;
     adminAuthBtn.onclick = showAdminAuth;
     showNotification('info', 'Выход', 'Вы вышли из режима модератора');
@@ -1790,10 +1930,10 @@
       await db.ref('posts/' + postToDelete).remove();
       
       hideDeleteModal();
-      showNotification('success', 'Удалено', 'Сообщение успешно удалено');
+      showNotification('success', 'Удалено', 'Сообщение удалено');
       
     } catch (error) {
-      showNotification('error', 'Ошибка', 'Не удалось удалить сообщение');
+      showNotification('error', 'Ошибка', 'Не удалось удалить');
       console.error('Ошибка удаления:', error);
     }
   }
@@ -1803,7 +1943,7 @@
     isAdmin = true;
     adminAuthBtn.innerHTML = `
       <span class="admin-badge">
-        <i class="fas fa-crown"></i> Режим модератора
+        <i class="fas fa-crown"></i> Модератор
       </span>
     `;
     adminAuthBtn.onclick = adminLogout;
@@ -1814,6 +1954,7 @@
     if (e.target === adminAuthModal) hideAdminAuth();
     if (e.target === deleteModal) hideDeleteModal();
     if (e.target === imageModal) hideImageModal();
+    if (e.target === createPostModal) hideCreatePostModal();
   });
 
   // Закрытие по Escape
@@ -1822,6 +1963,7 @@
       hideAdminAuth();
       hideDeleteModal();
       hideImageModal();
+      hideCreatePostModal();
     }
   });
 
@@ -1831,12 +1973,6 @@
     if (schoolCodeInput) {
       schoolCodeInput.focus();
     }
-  });
-
-  // Подсказка при наведении на код класса
-  document.getElementById('classCode').addEventListener('focus', function() {
-    const availableCodes = Object.keys(classCodes).join(', ');
-    this.title = `Доступные коды: ${availableCodes}. Можно оставить пустым.`;
   });
 
   // Автоматическое закрытие уведомления при клике
