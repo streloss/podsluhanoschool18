@@ -178,57 +178,62 @@
     /* FORUM */
     .forum-container {
       min-height: 100vh;
-      padding-bottom: 40px;
+      display: flex;
       position: relative;
       z-index: 1;
     }
 
+    /* ОСНОВНОЙ КОНТЕНТ */
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
     header {
-      padding: 15px 5%;
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(10px);
+      padding: 15px 0;
+      background: transparent;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
     }
 
     .logo-container {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 15px;
     }
 
     .logo {
-      width: 45px;
-      height: 45px;
+      width: 50px;
+      height: 50px;
       background: linear-gradient(135deg, var(--primary), var(--success));
-      border-radius: 12px; /* Изменено с 50% на 12px для овала */
+      border-radius: 12px; /* Овал */
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 20px;
       color: white;
       border: 2px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* На мобильных делаем логотип круглым */
     @media (max-width: 768px) {
       .logo {
         border-radius: 50%; /* На мобильных - круг */
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
       }
     }
 
     .logo-text h2 {
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 700;
       margin: 0;
       background: linear-gradient(90deg, var(--light-1), var(--light-3));
@@ -238,33 +243,23 @@
 
     .logo-text p {
       color: var(--light-3);
-      font-size: 12px;
-      margin: 2px 0 0;
-      display: none;
-    }
-
-    @media (min-width: 768px) {
-      .logo-text p {
-        display: block;
-      }
-      .logo-text h2 {
-        font-size: 20px;
-      }
+      font-size: 13px;
+      margin: 3px 0 0;
     }
 
     .admin-auth-btn {
-      padding: 8px 15px;
+      padding: 10px 18px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
       background: rgba(30, 41, 59, 0.6);
       color: var(--light-2);
       cursor: pointer;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       transition: var(--transition);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       white-space: nowrap;
     }
 
@@ -277,162 +272,71 @@
     .admin-badge {
       background: linear-gradient(90deg, var(--success), #0d9488);
       color: white;
-      padding: 6px 12px;
+      padding: 8px 16px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
     }
 
-    main {
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 0 5%;
-      position: relative;
-      z-index: 1;
-      padding-bottom: 80px; /* Место для плавающей кнопки */
+    /* СЕТКА С ДВУМЯ КОЛОНКАМИ */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 25px;
+      flex: 1;
     }
 
-    /* Плавающая кнопка создания поста */
-    .floating-create-btn {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: var(--shadow-lg);
-      z-index: 90;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: var(--transition);
-    }
-
-    .floating-create-btn:hover {
-      transform: translateY(-5px) scale(1.1);
-      box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
-    }
-
-    @media (max-width: 768px) {
-      .floating-create-btn {
-        bottom: 20px;
-        right: 20px;
-        width: 56px;
-        height: 56px;
+    @media (max-width: 1024px) {
+      .content-grid {
+        grid-template-columns: 1fr;
       }
     }
 
-    /* Модальное окно создания поста */
-    .create-post-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
+    /* ЛЕВАЯ КОЛОНКА - ФОРУМ */
+    .forum-column {
       display: flex;
-      align-items: flex-end;
-      justify-content: flex-end;
-      z-index: 1000;
-      backdrop-filter: blur(5px);
-      animation: fadeIn 0.3s ease;
-      padding: 20px;
+      flex-direction: column;
     }
 
-    .create-post-content {
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(20px);
+    /* ФОРМА СОЗДАНИЯ ПОСТА В ВЕРХУ */
+    .create-post-form {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      width: 100%;
-      max-width: 400px;
-      box-shadow: var(--shadow-lg);
-      animation: slideUp 0.4s ease-out;
-      position: relative;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(100px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    @media (max-width: 768px) {
-      .create-post-modal {
-        padding: 10px;
-        align-items: flex-end;
-      }
-      
-      .create-post-content {
-        max-width: 100%;
-        max-height: 85vh;
-      }
-    }
-
-    .create-post-header {
       padding: 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      margin-bottom: 25px;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 1;
     }
 
-    .create-post-header h3 {
+    .create-post-form h3 {
       font-size: 18px;
       font-weight: 600;
-      margin: 0;
+      margin-bottom: 18px;
       display: flex;
       align-items: center;
       gap: 10px;
       color: var(--light-1);
     }
 
-    .create-post-header h3 i {
+    .create-post-form h3 i {
       color: var(--primary);
-    }
-
-    .create-post-body {
-      padding: 20px;
-    }
-
-    .create-post-close {
-      background: none;
-      border: none;
-      color: var(--light-3);
-      font-size: 20px;
-      cursor: pointer;
-      transition: var(--transition);
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-    }
-
-    .create-post-close:hover {
-      background: rgba(255,255,255,0.1);
-      color: var(--light-1);
     }
 
     .input-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 15px;
       margin-bottom: 15px;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 768px) {
       .input-row {
         grid-template-columns: 1fr;
       }
@@ -440,22 +344,20 @@
 
     .input-group {
       position: relative;
-      margin-bottom: 12px;
     }
 
     .input-group i {
       position: absolute;
-      left: 12px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--light-3);
       font-size: 16px;
-      z-index: 1;
     }
 
     input, textarea {
       width: 100%;
-      padding: 12px 12px 12px 40px;
+      padding: 13px 13px 13px 42px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
       background: rgba(30, 41, 59, 0.6);
@@ -486,7 +388,7 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 15px;
-      padding: 10px 12px;
+      padding: 10px 14px;
       background: rgba(30, 41, 59, 0.6);
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
@@ -504,10 +406,10 @@
     }
 
     .toggle-switch {
-      width: 40px;
-      height: 22px;
+      width: 42px;
+      height: 24px;
       background: var(--dark-3);
-      border-radius: 11px;
+      border-radius: 12px;
       position: relative;
       transition: var(--transition);
     }
@@ -519,8 +421,8 @@
     .toggle-switch::after {
       content: '';
       position: absolute;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       background: white;
       border-radius: 50%;
       top: 2px;
@@ -533,7 +435,7 @@
     }
 
     .toggle-label {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--light-2);
       flex: 1;
     }
@@ -546,15 +448,15 @@
     .file-upload-label {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 15px;
+      gap: 10px;
+      padding: 12px 16px;
       background: rgba(30, 41, 59, 0.6);
       border: 2px dashed var(--border);
       border-radius: var(--radius-sm);
       cursor: pointer;
       transition: var(--transition);
       color: var(--light-2);
-      font-size: 13px;
+      font-size: 14px;
       justify-content: center;
     }
 
@@ -584,17 +486,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 12px;
+      padding: 9px 13px;
       background: rgba(30, 41, 59, 0.8);
       border-radius: var(--radius-sm);
-      margin-bottom: 6px;
+      margin-bottom: 7px;
       border: 1px solid var(--border);
     }
 
     .preview-info {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       flex: 1;
     }
 
@@ -614,22 +516,22 @@
 
     .preview-size {
       color: var(--light-3);
-      font-size: 11px;
+      font-size: 12px;
     }
 
     .remove-file {
       background: rgba(239, 68, 68, 0.1);
       border: none;
       color: var(--danger);
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: var(--transition);
-      font-size: 12px;
+      font-size: 13px;
     }
 
     .remove-file:hover {
@@ -639,12 +541,12 @@
 
     .form-actions {
       display: flex;
-      gap: 10px;
+      justify-content: flex-end;
       margin-top: 20px;
     }
 
     .publish-btn {
-      padding: 12px 20px;
+      padding: 12px 26px;
       border-radius: var(--radius-sm);
       border: none;
       background: linear-gradient(90deg, var(--primary), var(--primary-dark));
@@ -656,13 +558,11 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      flex: 1;
-      justify-content: center;
     }
 
     .publish-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 8px 18px rgba(59, 130, 246, 0.3);
     }
 
     .publish-btn:disabled {
@@ -672,52 +572,30 @@
       box-shadow: none;
     }
 
-    .cancel-btn {
-      padding: 12px 20px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: rgba(30, 41, 59, 0.6);
-      color: var(--light-2);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      justify-content: center;
-    }
-
-    .cancel-btn:hover {
-      background: rgba(71, 85, 105, 0.6);
-    }
-
+    /* ПОСТЫ ФОРУМА */
     .posts-container {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
 
     .empty-state {
       text-align: center;
-      padding: 40px 20px;
+      padding: 50px 20px;
       color: var(--light-3);
     }
 
     .empty-state i {
-      font-size: 40px;
+      font-size: 48px;
       margin-bottom: 15px;
       color: var(--dark-3);
     }
 
     .empty-state h3 {
-      font-size: 18px;
+      font-size: 20px;
       margin-bottom: 10px;
       color: var(--light-2);
-    }
-
-    .empty-state p {
-      font-size: 14px;
     }
 
     .post {
@@ -725,7 +603,7 @@
       backdrop-filter: blur(10px);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 22px;
       transition: var(--transition);
       animation: fadeIn 0.5s ease-out;
       position: relative;
@@ -747,27 +625,25 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .post-author {
       display: flex;
       align-items: center;
-      gap: 10px;
-      flex: 1;
+      gap: 12px;
     }
 
     .author-avatar {
-      width: 38px;
-      height: 38px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-weight: 600;
-      font-size: 15px;
-      flex-shrink: 0;
+      font-size: 16px;
     }
 
     .anonymous-avatar {
@@ -778,39 +654,29 @@
       background: linear-gradient(135deg, var(--primary), #8b5cf6);
     }
 
-    .author-info {
-      flex: 1;
-      min-width: 0;
-    }
-
     .author-info h4 {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
       color: var(--light-1);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .author-meta {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
+      gap: 10px;
+      font-size: 13px;
       color: var(--light-3);
-      flex-wrap: wrap;
     }
 
     .class-badge {
       background: rgba(59, 130, 246, 0.15);
       color: var(--primary);
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
       font-weight: 600;
       border: 1px solid rgba(59, 130, 246, 0.3);
-      white-space: nowrap;
     }
 
     .no-class-badge {
@@ -821,64 +687,61 @@
 
     .post-date {
       color: var(--light-3);
-      font-size: 12px;
-      white-space: nowrap;
+      font-size: 13px;
     }
 
     .post-actions {
       display: flex;
-      gap: 8px;
-      flex-shrink: 0;
+      gap: 10px;
     }
 
     .delete-btn {
-      padding: 5px 10px;
+      padding: 6px 14px;
       border-radius: var(--radius-sm);
       border: none;
       background: rgba(239, 68, 68, 0.1);
       color: var(--danger);
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       transition: var(--transition);
       display: flex;
       align-items: center;
-      gap: 4px;
-      white-space: nowrap;
+      gap: 6px;
     }
 
     .delete-btn:hover {
       background: var(--danger);
       color: white;
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
     }
 
     .post-content {
       color: var(--light-2);
-      line-height: 1.6;
-      font-size: 14px;
+      line-height: 1.7;
+      font-size: 15px;
       white-space: pre-line;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       word-break: break-word;
     }
 
     /* Медиа контент */
     .media-content {
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     .media-item {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       border-radius: var(--radius-sm);
       overflow: hidden;
       max-width: 100%;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
     .post-image {
       max-width: 100%;
-      max-height: 300px;
+      max-height: 350px;
       display: block;
       border-radius: var(--radius-sm);
       cursor: pointer;
@@ -890,20 +753,259 @@
       transform: scale(1.02);
     }
 
+    /* ПРАВАЯ КОЛОНКА - CHANGELOGS */
+    .changelog-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .changelog-container {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 20px;
+      max-height: calc(100vh - 40px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .changelog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .changelog-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--light-1);
+    }
+
+    .changelog-header h3 i {
+      color: var(--warning);
+    }
+
+    .changelog-add-btn {
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .changelog-add-btn:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: var(--primary);
+    }
+
+    .changelog-add-btn.hidden {
+      display: none;
+    }
+
+    .changelog-content {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      padding-right: 5px;
+    }
+
+    .changelog-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .changelog-content::-webkit-scrollbar-track {
+      background: rgba(30, 41, 59, 0.3);
+      border-radius: 3px;
+    }
+
+    .changelog-content::-webkit-scrollbar-thumb {
+      background: var(--warning);
+      border-radius: 3px;
+    }
+
+    .changelog-empty {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--light-3);
+    }
+
+    .changelog-empty i {
+      font-size: 40px;
+      margin-bottom: 12px;
+      color: var(--dark-3);
+    }
+
+    .changelog-empty h4 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: var(--light-2);
+    }
+
+    .changelog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .changelog-item {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 15px;
+      transition: var(--transition);
+    }
+
+    .changelog-item:hover {
+      background: rgba(30, 41, 59, 0.8);
+      border-color: var(--warning);
+    }
+
+    .changelog-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .changelog-author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--warning);
+    }
+
+    .changelog-author i {
+      font-size: 12px;
+    }
+
+    .changelog-date {
+      font-size: 12px;
+      color: var(--light-3);
+    }
+
+    .changelog-message {
+      color: var(--light-2);
+      font-size: 14px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .changelog-delete-btn {
+      background: rgba(239, 68, 68, 0.1);
+      border: none;
+      color: var(--danger);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 12px;
+      margin-left: 8px;
+    }
+
+    .changelog-delete-btn:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    /* ФОРМА ДОБАВЛЕНИЯ CHANGELOG */
+    .changelog-form {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 15px;
+      margin-top: 15px;
+    }
+
+    .changelog-form.hidden {
+      display: none;
+    }
+
+    .changelog-form textarea {
+      min-height: 80px;
+      padding: 12px;
+      padding-left: 12px;
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .changelog-form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .changelog-cancel-btn {
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(30, 41, 59, 0.6);
+      color: var(--light-2);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      flex: 1;
+    }
+
+    .changelog-cancel-btn:hover {
+      background: rgba(71, 85, 105, 0.6);
+    }
+
+    .changelog-submit-btn {
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: linear-gradient(90deg, var(--warning), #d97706);
+      color: white;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      flex: 1;
+    }
+
+    .changelog-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    /* FOOTER */
     footer {
       text-align: center;
-      padding: 20px;
+      padding: 25px 20px;
       color: var(--light-3);
       font-size: 13px;
       border-top: 1px solid var(--border);
-      margin-top: 40px;
+      margin-top: 30px;
       background: rgba(15, 23, 42, 0.8);
-      position: relative;
-      z-index: 1;
     }
 
     .footer-content {
-      max-width: 900px;
+      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -919,7 +1021,7 @@
 
     .footer-links {
       display: flex;
-      gap: 15px;
+      gap: 18px;
     }
 
     .footer-links a {
@@ -933,7 +1035,7 @@
       color: var(--primary);
     }
 
-    /* Остальные модалки */
+    /* МОДАЛЬНЫЕ ОКНА */
     .modal {
       position: fixed;
       top: 0;
@@ -962,7 +1064,7 @@
       box-shadow: var(--shadow-lg);
       animation: fadeInUp 0.4s ease-out;
       position: relative;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
       z-index: 10001;
     }
@@ -984,7 +1086,7 @@
 
     .modal-image {
       max-width: 100%;
-      max-height: 90vh;
+      max-height: 85vh;
       display: block;
       border-radius: var(--radius-sm);
     }
@@ -1118,7 +1220,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 30px;
+      padding: 40px;
     }
 
     .spinner {
@@ -1137,8 +1239,8 @@
     /* NOTIFICATION */
     .notification {
       position: fixed;
-      top: 80px;
-      right: 15px;
+      top: 20px;
+      right: 20px;
       padding: 12px 20px;
       border-radius: var(--radius-sm);
       background: rgba(15, 23, 42, 0.98);
@@ -1190,6 +1292,17 @@
     }
 
     /* Адаптивность для мобильных */
+    @media (max-width: 1024px) {
+      .main-content {
+        padding: 15px;
+      }
+      
+      .changelog-container {
+        position: static;
+        max-height: none;
+      }
+    }
+
     @media (max-width: 768px) {
       .modal {
         padding: 10px;
@@ -1211,7 +1324,7 @@
       }
       
       .notification {
-        top: 70px;
+        top: 15px;
         right: 10px;
         left: 10px;
         max-width: none;
@@ -1231,32 +1344,29 @@
         max-height: 250px;
       }
       
-      main {
-        padding: 0 4%;
+      .content-grid {
+        gap: 20px;
       }
     }
 
     @media (max-width: 480px) {
       header {
-        padding: 12px 4%;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
       }
       
       .admin-auth-btn {
-        padding: 6px 10px;
-        font-size: 11px;
+        align-self: flex-end;
       }
       
       .post {
-        padding: 15px;
+        padding: 18px;
       }
       
-      .create-post-modal {
-        padding: 0;
-      }
-      
-      .create-post-content {
-        border-radius: var(--radius) var(--radius) 0 0;
-        max-height: 90vh;
+      .create-post-form,
+      .changelog-container {
+        padding: 18px;
       }
     }
   </style>
@@ -1284,103 +1394,122 @@
 
 <!-- FORUM -->
 <div id="forum" class="hidden forum-container">
-  <header>
-    <div class="logo-container">
-      <div class="logo">18</div>
-      <div class="logo-text">
-        <h2>Форум МБОУ СОШ №18</h2>
-        <p>Закрытое школьное сообщество • Якутск</p>
+  <div class="main-content">
+    <header>
+      <div class="logo-container">
+        <div class="logo">18</div>
+        <div class="logo-text">
+          <h2>Форум МБОУ СОШ №18</h2>
+          <p>Закрытое школьное сообщество • Якутск</p>
+        </div>
       </div>
-    </div>
-    
-    <button id="adminAuthBtn" class="admin-auth-btn" onclick="showAdminAuth()">
-      <i class="fas fa-user-shield"></i>
-      Модерация
-    </button>
-  </header>
-
-  <main>
-    <div id="posts" class="posts-container">
-      <div class="loading">
-        <div class="spinner"></div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Плавающая кнопка создания поста -->
-  <button class="floating-create-btn" id="floatingCreateBtn">
-    <i class="fas fa-plus"></i>
-  </button>
-
-  <footer>
-    <div class="footer-content">
-      <div>© 2024 МБОУ СОШ №18 • Закрытый форум</div>
-      <div class="footer-links">
-        <a href="#"><i class="fas fa-shield-alt"></i> Конфиденциальность</a>
-        <a href="#"><i class="fas fa-info-circle"></i> Правила</a>
-      </div>
-    </div>
-  </footer>
-</div>
-
-<!-- Модальное окно создания поста -->
-<div id="createPostModal" class="create-post-modal hidden">
-  <div class="create-post-content">
-    <div class="create-post-header">
-      <h3><i class="fas fa-plus-circle"></i> Новое сообщение</h3>
-      <button class="create-post-close" onclick="hideCreatePostModal()">
-        <i class="fas fa-times"></i>
+      
+      <button id="adminAuthBtn" class="admin-auth-btn" onclick="showAdminAuth()">
+        <i class="fas fa-user-shield"></i>
+        Модерация
       </button>
-    </div>
-    
-    <div class="create-post-body">
-      <div class="anonymous-toggle" id="anonymousToggle">
-        <div class="toggle-switch"></div>
-        <div class="toggle-label">
-          <i class="fas fa-user-secret"></i> Опубликовать анонимно
+    </header>
+
+    <div class="content-grid">
+      <!-- ЛЕВАЯ КОЛОНКА - ФОРУМ -->
+      <div class="forum-column">
+        <!-- ФОРМА СОЗДАНИЯ ПОСТА -->
+        <div class="create-post-form">
+          <h3><i class="fas fa-plus-circle"></i> Новое сообщение</h3>
+          
+          <div class="anonymous-toggle" id="anonymousToggle">
+            <div class="toggle-switch"></div>
+            <div class="toggle-label">
+              <i class="fas fa-user-secret"></i> Опубликовать анонимно
+            </div>
+          </div>
+          
+          <div class="input-row">
+            <div class="input-group">
+              <i class="fas fa-user"></i>
+              <input id="author" placeholder="Ваше имя (необязательно)" />
+            </div>
+            <div class="input-group">
+              <i class="fas fa-graduation-cap"></i>
+              <input id="classCode" placeholder="Класс (например 8A-18)" />
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <i class="fas fa-comment-alt"></i>
+            <textarea id="text" rows="4" placeholder="Напишите ваше сообщение..."></textarea>
+          </div>
+
+          <!-- Загрузка файлов -->
+          <div class="file-upload-section">
+            <label for="fileInput" class="file-upload-label">
+              <i class="fas fa-camera"></i>
+              <span>Добавить фото (до 2 МБ)</span>
+            </label>
+            <input type="file" id="fileInput" accept="image/*" capture="environment" />
+            
+            <div id="filePreview" class="file-preview"></div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="publish-btn" id="publishBtn" onclick="addPost()">
+              <i class="fas fa-paper-plane"></i>
+              Опубликовать
+            </button>
+          </div>
         </div>
-      </div>
-      
-      <div class="input-row">
-        <div class="input-group">
-          <i class="fas fa-user"></i>
-          <input id="author" placeholder="Ваше имя (необязательно)" />
+
+        <!-- ПОСТЫ ФОРУМА -->
+        <div id="posts" class="posts-container">
+          <div class="loading">
+            <div class="spinner"></div>
+          </div>
         </div>
-        <div class="input-group">
-          <i class="fas fa-graduation-cap"></i>
-          <input id="classCode" placeholder="Класс (например 8A-18)" />
-        </div>
-      </div>
-      
-      <div class="input-group">
-        <i class="fas fa-comment-alt"></i>
-        <textarea id="text" rows="4" placeholder="Напишите ваше сообщение..."></textarea>
       </div>
 
-      <!-- Загрузка файлов -->
-      <div class="file-upload-section">
-        <label for="fileInput" class="file-upload-label">
-          <i class="fas fa-camera"></i>
-          <span>Добавить фото (до 2 МБ)</span>
-        </label>
-        <input type="file" id="fileInput" accept="image/*" capture="environment" />
-        
-        <div id="filePreview" class="file-preview"></div>
-      </div>
-      
-      <div class="form-actions">
-        <button class="cancel-btn" onclick="hideCreatePostModal()">
-          <i class="fas fa-times"></i> Отмена
-        </button>
-        <button class="publish-btn" id="publishBtn" onclick="addPost()">
-          <i class="fas fa-paper-plane"></i> Отправить
-        </button>
+      <!-- ПРАВАЯ КОЛОНКА - CHANGELOGS -->
+      <div class="changelog-column">
+        <div class="changelog-container">
+          <div class="changelog-header">
+            <h3><i class="fas fa-history"></i> Обновления</h3>
+            <button id="changelogAddBtn" class="changelog-add-btn hidden" onclick="showChangelogForm()">
+              <i class="fas fa-plus"></i> Добавить
+            </button>
+          </div>
+          
+          <div class="changelog-content">
+            <div id="changelogList" class="changelog-list">
+              <div class="loading">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ФОРМА ДОБАВЛЕНИЯ CHANGELOG -->
+          <div id="changelogForm" class="changelog-form hidden">
+            <textarea id="changelogMessage" placeholder="Введите сообщение об обновлении..."></textarea>
+            <div class="changelog-form-actions">
+              <button class="changelog-cancel-btn" onclick="hideChangelogForm()">Отмена</button>
+              <button class="changelog-submit-btn" onclick="addChangelog()">Опубликовать</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <footer>
+      <div class="footer-content">
+        <div>© 2024 МБОУ СОШ №18 • Закрытый форум</div>
+        <div class="footer-links">
+          <a href="#"><i class="fas fa-shield-alt"></i> Конфиденциальность</a>
+          <a href="#"><i class="fas fa-info-circle"></i> Правила</a>
+        </div>
+      </div>
+    </footer>
   </div>
 </div>
 
-<!-- АДМИН МОДАЛКИ -->
+<!-- МОДАЛЬНЫЕ ОКНА -->
 <div id="adminAuthModal" class="modal hidden">
   <div class="modal-content">
     <button class="modal-close" onclick="hideAdminAuth()">
@@ -1445,6 +1574,7 @@
   // Текущий контекст
   let isAdmin = false;
   let postToDelete = null;
+  let changelogToDelete = null;
   let isAnonymous = false;
   let selectedFiles = [];
 
@@ -1455,9 +1585,11 @@
   const adminAuthModal = document.getElementById('adminAuthModal');
   const deleteModal = document.getElementById('deleteModal');
   const imageModal = document.getElementById('imageModal');
-  const createPostModal = document.getElementById('createPostModal');
-  const floatingCreateBtn = document.getElementById('floatingCreateBtn');
   const postsDiv = document.getElementById('posts');
+  const changelogList = document.getElementById('changelogList');
+  const changelogAddBtn = document.getElementById('changelogAddBtn');
+  const changelogForm = document.getElementById('changelogForm');
+  const changelogMessage = document.getElementById('changelogMessage');
   const notification = document.getElementById('notification');
   const anonymousToggle = document.getElementById('anonymousToggle');
   const authorInput = document.getElementById('author');
@@ -1483,6 +1615,7 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
   const postsRef = db.ref('posts');
+  const changelogsRef = db.ref('changelogs');
 
   // 🔑 КОДЫ КЛАССОВ
   const classCodes = {
@@ -1507,22 +1640,6 @@
     body.style.overflow = '';
   }
 
-  function showCreatePostModal() {
-    showModal(createPostModal);
-  }
-
-  function hideCreatePostModal() {
-    hideModal(createPostModal);
-    // Сброс формы
-    if (!isAnonymous) {
-      document.getElementById('author').value = '';
-    }
-    document.getElementById('classCode').value = '';
-    document.getElementById('text').value = '';
-    selectedFiles = [];
-    updateFilePreview();
-  }
-
   function showImageModal(imageSrc) {
     modalImage.src = imageSrc;
     showModal(imageModal);
@@ -1530,6 +1647,17 @@
 
   function hideImageModal() {
     hideModal(imageModal);
+  }
+
+  // Changelog functions
+  function showChangelogForm() {
+    changelogForm.classList.remove('hidden');
+    changelogMessage.focus();
+  }
+
+  function hideChangelogForm() {
+    changelogForm.classList.add('hidden');
+    changelogMessage.value = '';
   }
 
   // Функции уведомлений
@@ -1567,13 +1695,13 @@
   function enterForum() {
     const code = document.getElementById('schoolCode').value.trim();
     if (code !== SCHOOL_ACCESS_CODE) {
-      showNotification('error', 'Ошибка доступа', 'Неверный код доступа');
+      showNotification('error', 'Ошибка доступа', 'Неверный код доступа школы');
       return;
     }
     localStorage.setItem('school18_access', 'true');
     accessScreen.classList.add('hidden');
     forum.classList.remove('hidden');
-    showNotification('success', 'Добро пожаловать!', 'Вы вошли на форум');
+    showNotification('success', 'Добро пожаловать!', 'Вы успешно вошли на форум');
   }
 
   // Проверка доступа при загрузке
@@ -1581,9 +1709,6 @@
     accessScreen.classList.add('hidden');
     forum.classList.remove('hidden');
   }
-
-  // Кнопка создания поста
-  floatingCreateBtn.addEventListener('click', showCreatePostModal);
 
   // Переключение анонимного режима
   anonymousToggle.addEventListener('click', function() {
@@ -1709,7 +1834,7 @@
         <div class="empty-state">
           <i class="fas fa-comments"></i>
           <h3>Пока нет сообщений</h3>
-          <p>Нажмите "+" чтобы создать первое сообщение</p>
+          <p>Будьте первым, кто поделится новостью или вопросом!</p>
         </div>
       `;
       return;
@@ -1800,6 +1925,77 @@
     });
   });
 
+  // Загрузка changelogs
+  changelogsRef.on('value', snap => {
+    changelogList.innerHTML = '';
+    const data = snap.val();
+    
+    if (!data) {
+      changelogList.innerHTML = `
+        <div class="changelog-empty">
+          <i class="fas fa-history"></i>
+          <h4>Нет обновлений</h4>
+          <p>Здесь будут появляться важные объявления</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // Создание массива changelogs с ключами
+    const changelogsArray = Object.entries(data).map(([key, value]) => ({
+      id: key,
+      ...value
+    }));
+    
+    // Сортировка по дате (новые сначала)
+    changelogsArray.sort((a, b) => {
+      return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+    });
+    
+    // Отображение changelogs
+    changelogsArray.forEach(changelog => {
+      const div = document.createElement('div');
+      div.className = 'changelog-item';
+      div.dataset.id = changelog.id;
+      
+      // Форматирование даты
+      let displayDate = changelog.date;
+      if (changelog.timestamp) {
+        const changelogDate = new Date(changelog.timestamp);
+        const now = new Date();
+        const diffMs = now - changelogDate;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        
+        if (diffMins < 1) displayDate = 'Только что';
+        else if (diffMins < 60) displayDate = `${diffMins} мин. назад`;
+        else if (diffHours < 24) displayDate = `${diffHours} ч. назад`;
+        else if (diffDays < 7) displayDate = `${diffDays} дн. назад`;
+        else displayDate = changelogDate.toLocaleDateString('ru-RU');
+      }
+      
+      div.innerHTML = `
+        <div class="changelog-item-header">
+          <div class="changelog-author">
+            <i class="fas fa-user-crown"></i>
+            ${changelog.author || 'Модератор'}
+          </div>
+          <div style="display: flex; align-items: center;">
+            <span class="changelog-date">${displayDate}</span>
+            ${isAdmin ? `
+              <button class="changelog-delete-btn" onclick="deleteChangelog('${changelog.id}')">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            ` : ''}
+          </div>
+        </div>
+        <div class="changelog-message">${changelog.message || ''}</div>
+      `;
+      changelogList.appendChild(div);
+    });
+  });
+
   // Добавление поста
   async function addPost() {
     const author = isAnonymous ? 'Аноним' : document.getElementById('author').value.trim();
@@ -1820,7 +2016,7 @@
 
     // Блокировка кнопки на время отправки
     publishBtn.disabled = true;
-    publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+    publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Публикация...';
 
     try {
       // Подготовка данных
@@ -1849,10 +2045,20 @@
       // Сохранение поста
       await postsRef.push(postData);
 
-      // Закрытие модалки и сброс формы
-      hideCreatePostModal();
+      // Сброс формы
+      if (!isAnonymous) {
+        document.getElementById('author').value = '';
+      }
+      document.getElementById('classCode').value = '';
+      document.getElementById('text').value = '';
+      selectedFiles = [];
+      updateFilePreview();
       
-      showNotification('success', 'Успешно!', 'Сообщение отправлено');
+      // Сброс кнопки
+      publishBtn.disabled = false;
+      publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Опубликовать';
+      
+      showNotification('success', 'Успешно!', 'Сообщение опубликовано');
       
       // Прокрутка к верху
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1860,10 +2066,51 @@
     } catch (error) {
       // Сброс кнопки при ошибке
       publishBtn.disabled = false;
-      publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить';
+      publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Опубликовать';
       
-      showNotification('error', 'Ошибка', 'Не удалось отправить сообщение');
+      showNotification('error', 'Ошибка', 'Не удалось опубликовать сообщение');
       console.error('Ошибка Firebase:', error);
+    }
+  }
+
+  // Добавление changelog
+  async function addChangelog() {
+    const message = changelogMessage.value.trim();
+
+    if (!message) {
+      showNotification('error', 'Ошибка', 'Введите сообщение об обновлении');
+      return;
+    }
+
+    try {
+      const changelogData = {
+        author: 'Модератор',
+        message,
+        date: new Date().toLocaleString('ru-RU'),
+        timestamp: Date.now()
+      };
+
+      await changelogsRef.push(changelogData);
+
+      hideChangelogForm();
+      showNotification('success', 'Успешно!', 'Обновление добавлено');
+      
+    } catch (error) {
+      showNotification('error', 'Ошибка', 'Не удалось добавить обновление');
+      console.error('Ошибка Firebase:', error);
+    }
+  }
+
+  // Удаление changelog
+  async function deleteChangelog(changelogId) {
+    if (!isAdmin) return;
+    
+    try {
+      await db.ref('changelogs/' + changelogId).remove();
+      showNotification('success', 'Удалено', 'Обновление удалено');
+    } catch (error) {
+      showNotification('error', 'Ошибка', 'Не удалось удалить обновление');
+      console.error('Ошибка удаления:', error);
     }
   }
 
@@ -1889,6 +2136,10 @@
         </span>
       `;
       adminAuthBtn.onclick = adminLogout;
+      
+      // Показать кнопку добавления changelog
+      changelogAddBtn.classList.remove('hidden');
+      
       hideAdminAuth();
       showNotification('success', 'Успешно', 'Вы вошли как модератор');
     } else {
@@ -1904,6 +2155,11 @@
       Модерация
     `;
     adminAuthBtn.onclick = showAdminAuth;
+    
+    // Скрыть кнопку добавления changelog
+    changelogAddBtn.classList.add('hidden');
+    hideChangelogForm();
+    
     showNotification('info', 'Выход', 'Вы вышли из режима модератора');
   }
 
@@ -1947,6 +2203,7 @@
       </span>
     `;
     adminAuthBtn.onclick = adminLogout;
+    changelogAddBtn.classList.remove('hidden');
   }
 
   // Закрытие модалок по клику вне области
@@ -1954,7 +2211,6 @@
     if (e.target === adminAuthModal) hideAdminAuth();
     if (e.target === deleteModal) hideDeleteModal();
     if (e.target === imageModal) hideImageModal();
-    if (e.target === createPostModal) hideCreatePostModal();
   });
 
   // Закрытие по Escape
@@ -1963,7 +2219,7 @@
       hideAdminAuth();
       hideDeleteModal();
       hideImageModal();
-      hideCreatePostModal();
+      hideChangelogForm();
     }
   });
 
@@ -1986,6 +2242,14 @@
     const hasText = this.value.trim().length > 0;
     const hasFiles = selectedFiles.length > 0;
     publishBtn.disabled = !hasText && !hasFiles;
+  });
+
+  // Валидация changelog формы
+  changelogMessage.addEventListener('input', function() {
+    const submitBtn = document.querySelector('.changelog-submit-btn');
+    if (submitBtn) {
+      submitBtn.disabled = this.value.trim().length === 0;
+    }
   });
 </script>
 </body>
