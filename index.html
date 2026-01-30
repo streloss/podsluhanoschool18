@@ -8,10 +8,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Firebase -->
+  <!-- Firebase (без Storage пока) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 
   <style>
     :root {
@@ -750,11 +749,12 @@
 
     .post-image {
       max-width: 100%;
-      max-height: 500px;
+      max-height: 400px;
       display: block;
       border-radius: var(--radius-sm);
       cursor: pointer;
       transition: transform 0.3s ease;
+      object-fit: contain;
     }
 
     .post-image:hover {
@@ -763,7 +763,7 @@
 
     .post-video {
       max-width: 100%;
-      max-height: 500px;
+      max-height: 400px;
       display: block;
       border-radius: var(--radius-sm);
     }
@@ -1193,9 +1193,9 @@
       <div class="file-upload-section">
         <label for="fileInput" class="file-upload-label">
           <i class="fas fa-paperclip"></i>
-          <span>Прикрепить фото или видео (до 10 МБ)</span>
+          <span>Прикрепить фото или видео (до 2 МБ)</span>
         </label>
-        <input type="file" id="fileInput" accept="image/*,video/*" multiple />
+        <input type="file" id="fileInput" accept="image/*" capture="environment" />
         
         <div id="filePreview" class="file-preview"></div>
         
@@ -1295,8 +1295,8 @@
   // 🔐 КОДЫ ДОСТУПА
   const SCHOOL_ACCESS_CODE = "LISTEN18";
   const ADMIN_PASSWORD = "ADMIN18_MOD";
-  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 МБ
-  const MAX_FILES = 5; // Максимум 5 файлов
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 МБ (меньше для Base64)
+  const MAX_FILES = 3; // Максимум 3 файла (Base64 занимает много места)
 
   // Текущий контекст
   let isAdmin = false;
@@ -1339,7 +1339,6 @@
   // Инициализация Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  const storage = firebase.storage();
   const postsRef = db.ref('posts');
 
   // 🔑 КОДЫ КЛАССОВ
@@ -1442,12 +1441,12 @@
   });
 
   // Обработка выбора файлов
-  fileInput.addEventListener('change', function(e) {
+  fileInput.addEventListener('change', async function(e) {
     const files = Array.from(e.target.files);
     
     // Проверка количества файлов
     if (selectedFiles.length + files.length > MAX_FILES) {
-      showNotification('error', 'Ошибка', `Максимум можно загрузить ${MAX_FILES} файлов`);
+      showNotification('error', 'Ошибка', `Максимум можно загрузить ${MAX_FILES} файла`);
       this.value = '';
       return;
     }
@@ -1455,26 +1454,55 @@
     // Проверка размера файлов
     const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
     if (oversizedFiles.length > 0) {
-      showNotification('error', 'Ошибка', `Некоторые файлы превышают максимальный размер ${MAX_FILE_SIZE / 1024 / 1024} МБ`);
+      showNotification('error', 'Ошибка', `Файлы не должны превышать ${MAX_FILE_SIZE / 1024 / 1024} МБ`);
       this.value = '';
       return;
     }
     
     // Добавление файлов
-    files.forEach(file => {
-      const fileId = Date.now() + Math.random().toString(36).substr(2, 9);
-      selectedFiles.push({
-        id: fileId,
-        file: file,
-        name: file.name,
-        size: file.size,
-        type: file.type
-      });
-    });
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        showNotification('error', 'Ошибка', 'Поддерживаются только изображения (JPG, PNG, GIF)');
+        continue;
+      }
+      
+      try {
+        const base64Data = await fileToBase64(file);
+        
+        // Проверка размера Base64
+        if (base64Data.length > 3 * 1024 * 1024) { // ~3MB в Base64
+          showNotification('error', 'Ошибка', 'Изображение слишком большое. Выберите файл поменьше.');
+          continue;
+        }
+        
+        const fileId = Date.now() + Math.random().toString(36).substr(2, 9);
+        selectedFiles.push({
+          id: fileId,
+          base64: base64Data,
+          name: file.name,
+          size: file.size,
+          type: file.type
+        });
+        
+      } catch (error) {
+        console.error('Ошибка чтения файла:', error);
+        showNotification('error', 'Ошибка', 'Не удалось прочитать файл');
+      }
+    }
     
     updateFilePreview();
     this.value = '';
   });
+
+  // Конвертация файла в Base64
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
 
   // Обновление превью файлов
   function updateFilePreview() {
@@ -1489,13 +1517,12 @@
     
     selectedFiles.forEach((fileData, index) => {
       const fileSize = formatFileSize(fileData.size);
-      const fileIcon = fileData.type.startsWith('image/') ? 'fa-image' : 'fa-video';
       
       const previewItem = document.createElement('div');
       previewItem.className = 'preview-item';
       previewItem.innerHTML = `
         <div class="preview-info">
-          <i class="fas ${fileIcon} preview-icon"></i>
+          <i class="fas fa-image preview-icon"></i>
           <div class="preview-name" title="${fileData.name}">${fileData.name}</div>
           <div class="preview-size">${fileSize}</div>
         </div>
@@ -1520,37 +1547,6 @@
     const sizes = ['Б', 'КБ', 'МБ', 'ГБ'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  }
-
-  // Загрузка файлов в Storage
-  async function uploadFiles(postId) {
-    const uploadPromises = selectedFiles.map(async (fileData, index) => {
-      const fileRef = storage.ref(`posts/${postId}/${fileData.id}_${fileData.name}`);
-      
-      try {
-        const snapshot = await fileRef.put(fileData.file, {
-          customMetadata: {
-            originalName: fileData.name,
-            type: fileData.type,
-            index: index.toString()
-          }
-        });
-        
-        const downloadURL = await snapshot.ref.getDownloadURL();
-        
-        return {
-          url: downloadURL,
-          name: fileData.name,
-          type: fileData.type,
-          size: fileData.size
-        };
-      } catch (error) {
-        console.error('Ошибка загрузки файла:', error);
-        return null;
-      }
-    });
-    
-    return Promise.all(uploadPromises);
   }
 
   // Загрузка постов
@@ -1615,25 +1611,14 @@
       
       // Отображение медиа файлов
       let mediaContent = '';
-      if (post.files && post.files.length > 0) {
+      if (post.images && post.images.length > 0) {
         mediaContent += '<div class="media-content">';
-        post.files.forEach(file => {
-          if (file.type.startsWith('image/')) {
-            mediaContent += `
-              <div class="media-item">
-                <img src="${file.url}" alt="${file.name}" class="post-image" onclick="showImageModal('${file.url}')" />
-              </div>
-            `;
-          } else if (file.type.startsWith('video/')) {
-            mediaContent += `
-              <div class="media-item">
-                <video controls class="post-video">
-                  <source src="${file.url}" type="${file.type}">
-                  Ваш браузер не поддерживает видео тег.
-                </video>
-              </div>
-            `;
-          }
+        post.images.forEach((image, index) => {
+          mediaContent += `
+            <div class="media-item">
+              <img src="${image.base64}" alt="Изображение ${index + 1}" class="post-image" onclick="showImageModal('${image.base64}')" />
+            </div>
+          `;
         });
         mediaContent += '</div>';
       }
@@ -1673,7 +1658,7 @@
 
     // Проверка обязательных полей
     if (!text && selectedFiles.length === 0) {
-      showNotification('error', 'Ошибка', 'Добавьте текст сообщения или прикрепите файл');
+      showNotification('error', 'Ошибка', 'Добавьте текст сообщения или прикрепите изображение');
       return;
     }
 
@@ -1688,32 +1673,13 @@
     publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Публикация...';
 
     try {
-      // Создание поста в базе данных
-      const postRef = postsRef.push();
-      const postId = postRef.key;
-
-      let files = [];
-      
-      // Загрузка файлов, если они есть
-      if (selectedFiles.length > 0) {
-        showProgress(true);
-        
-        // Обновление прогресса
-        const updateProgress = (progress) => {
-          const percent = Math.round(progress * 100);
-          progressFill.style.width = percent + '%';
-          progressText.textContent = percent + '%';
-        };
-        
-        updateProgress(0.1);
-        
-        // Загрузка файлов
-        files = await uploadFiles(postId);
-        files = files.filter(file => file !== null);
-        
-        updateProgress(1);
-        setTimeout(() => showProgress(false), 500);
-      }
+      // Подготовка данных
+      const images = selectedFiles.map(file => ({
+        base64: file.base64,
+        name: file.name,
+        type: file.type,
+        size: file.size
+      }));
 
       // Данные поста
       const postData = {
@@ -1725,13 +1691,13 @@
         isAnonymous: isAnonymous || !author
       };
 
-      // Добавляем файлы если есть
-      if (files.length > 0) {
-        postData.files = files;
+      // Добавляем изображения если есть
+      if (images.length > 0) {
+        postData.images = images;
       }
 
       // Сохранение поста
-      await postRef.set(postData);
+      await postsRef.push(postData);
 
       // Сброс формы
       if (!isAnonymous) {
@@ -1755,21 +1721,9 @@
       // Сброс кнопки при ошибке
       publishBtn.disabled = false;
       publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Опубликовать';
-      showProgress(false);
       
       showNotification('error', 'Ошибка', 'Не удалось опубликовать сообщение');
       console.error('Ошибка Firebase:', error);
-    }
-  }
-
-  // Показать/скрыть прогресс загрузки
-  function showProgress(show) {
-    if (show) {
-      uploadProgress.classList.add('active');
-    } else {
-      uploadProgress.classList.remove('active');
-      progressFill.style.width = '0%';
-      progressText.textContent = '0%';
     }
   }
 
@@ -1832,29 +1786,11 @@
     if (!postToDelete || !isAdmin) return;
     
     try {
-      // Получаем данные поста
-      const postSnapshot = await db.ref('posts/' + postToDelete).once('value');
-      const post = postSnapshot.val();
-      
-      // Удаляем файлы из Storage если они есть
-      if (post && post.files) {
-        for (const file of post.files) {
-          try {
-            // Извлекаем путь к файлу из URL
-            const filePath = decodeURIComponent(file.url.split('/o/')[1].split('?')[0]);
-            const fileRef = storage.ref(filePath);
-            await fileRef.delete();
-          } catch (error) {
-            console.error('Ошибка удаления файла:', error);
-          }
-        }
-      }
-      
       // Удаляем пост из базы данных
       await db.ref('posts/' + postToDelete).remove();
       
       hideDeleteModal();
-      showNotification('success', 'Удалено', 'Сообщение и файлы успешно удалены');
+      showNotification('success', 'Удалено', 'Сообщение успешно удалено');
       
     } catch (error) {
       showNotification('error', 'Ошибка', 'Не удалось удалить сообщение');
