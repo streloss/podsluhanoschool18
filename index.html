@@ -179,6 +179,8 @@
     .forum-container {
       min-height: 100vh;
       padding-bottom: 40px;
+      position: relative;
+      z-index: 1;
     }
 
     header {
@@ -191,7 +193,7 @@
       align-items: center;
       position: sticky;
       top: 0;
-      z-index: 1000;
+      z-index: 100;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
@@ -267,6 +269,8 @@
       max-width: 900px;
       margin: 30px auto;
       padding: 0 5%;
+      position: relative;
+      z-index: 1;
     }
 
     .new-post {
@@ -278,6 +282,8 @@
       margin-bottom: 30px;
       box-shadow: var(--shadow);
       animation: slideIn 0.5s ease-out;
+      position: relative;
+      z-index: 1;
     }
 
     .new-post h3 {
@@ -347,6 +353,63 @@
       color: var(--light-3);
     }
 
+    /* Кнопка анонимного поста */
+    .anonymous-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 10px 15px;
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .anonymous-toggle:hover {
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .anonymous-toggle.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: var(--primary);
+    }
+
+    .toggle-switch {
+      width: 44px;
+      height: 24px;
+      background: var(--dark-3);
+      border-radius: 12px;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .anonymous-toggle.active .toggle-switch {
+      background: var(--primary);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: var(--transition);
+    }
+
+    .anonymous-toggle.active .toggle-switch::after {
+      left: 22px;
+    }
+
+    .toggle-label {
+      font-size: 14px;
+      color: var(--light-2);
+    }
+
     .form-actions {
       display: flex;
       justify-content: flex-end;
@@ -371,6 +434,13 @@
     .publish-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .publish-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .posts-container {
@@ -447,13 +517,20 @@
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), #8b5cf6);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-weight: 600;
       font-size: 16px;
+    }
+
+    .anonymous-avatar {
+      background: linear-gradient(135deg, #6b7280, #9ca3af);
+    }
+
+    .user-avatar {
+      background: linear-gradient(135deg, var(--primary), #8b5cf6);
     }
 
     .author-info h4 {
@@ -481,6 +558,12 @@
       border: 1px solid rgba(59, 130, 246, 0.3);
     }
 
+    .no-class-badge {
+      background: rgba(100, 116, 139, 0.15);
+      color: var(--light-3);
+      border: 1px solid rgba(100, 116, 139, 0.3);
+    }
+
     .post-date {
       color: var(--light-3);
       font-size: 13px;
@@ -504,8 +587,8 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      z-index: 2;
       position: relative;
+      z-index: 2;
     }
 
     .delete-btn:hover {
@@ -572,7 +655,7 @@
       color: var(--primary);
     }
 
-    /* MODAL - ИСПРАВЛЕНО: Увеличил z-index и добавил overflow */
+    /* MODAL - ИСПРАВЛЕНО: Правильный z-index */
     .modal {
       position: fixed;
       top: 0;
@@ -583,11 +666,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 2000; /* Увеличен для перекрытия всех элементов */
+      z-index: 10000; /* Очень высокий z-index для перекрытия всего */
       backdrop-filter: blur(10px);
       animation: fadeIn 0.3s ease;
-      overflow: auto; /* Добавлено для прокрутки если контент не помещается */
-      padding: 20px; /* Добавлено чтобы модалка не прилипала к краям */
+      overflow: auto;
+      padding: 20px;
     }
 
     .modal-content {
@@ -601,8 +684,9 @@
       box-shadow: var(--shadow-lg);
       animation: fadeInUp 0.4s ease-out;
       position: relative;
-      max-height: 90vh; /* Ограничение высоты */
-      overflow-y: auto; /* Прокрутка если контент не помещается */
+      max-height: 90vh;
+      overflow-y: auto;
+      z-index: 10001; /* Выше чем у самого модального окна */
     }
 
     .modal-content h3 {
@@ -613,7 +697,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding-right: 30px; /* Место для возможной кнопки закрытия */
+      padding-right: 30px;
     }
 
     .modal-content p {
@@ -627,7 +711,7 @@
       gap: 12px;
       justify-content: flex-end;
       margin-top: 25px;
-      flex-wrap: wrap; /* Для мобильных */
+      flex-wrap: wrap;
     }
 
     .modal-btn {
@@ -683,7 +767,6 @@
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
     }
 
-    /* Кнопка закрытия модалки */
     .modal-close {
       position: absolute;
       top: 20px;
@@ -700,6 +783,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
+      z-index: 10002; /* Самый высокий в модалке */
     }
 
     .modal-close:hover {
@@ -750,17 +834,17 @@
       to { transform: rotate(360deg); }
     }
 
-    /* NOTIFICATION - ИСПРАВЛЕНО: Увеличил z-index */
+    /* NOTIFICATION */
     .notification {
       position: fixed;
-      top: 90px; /* Сместил ниже чтобы не перекрывать header */
+      top: 90px;
       right: 20px;
       padding: 15px 25px;
       border-radius: var(--radius-sm);
       background: rgba(15, 23, 42, 0.98);
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
-      z-index: 3000; /* Увеличен для перекрытия модалок */
+      z-index: 9999; /* Высокий, но ниже чем у модалок */
       display: flex;
       align-items: center;
       gap: 12px;
@@ -809,11 +893,11 @@
     @media (max-width: 768px) {
       .modal {
         padding: 10px;
-        align-items: flex-start; /* Выравнивание по верху на мобильных */
+        align-items: flex-start;
       }
       
       .modal-content {
-        margin-top: 60px; /* Отступ сверху для header */
+        margin-top: 60px;
         max-height: calc(100vh - 100px);
       }
       
@@ -841,28 +925,6 @@
       .post-actions {
         align-self: flex-end;
       }
-    }
-
-    /* Дополнительные стили для предотвращения проблем с z-index */
-    .forum-container {
-      position: relative;
-      z-index: 1;
-    }
-
-    main {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Эффект для затемнения контента под модалкой */
-    body.modal-open {
-      overflow: hidden;
-    }
-
-    body.modal-open .forum-container {
-      filter: blur(2px);
-      pointer-events: none;
-      user-select: none;
     }
   </style>
 </head>
@@ -908,14 +970,21 @@
     <div class="new-post">
       <h3><i class="fas fa-plus-circle"></i> Создать новое сообщение</h3>
       
+      <div class="anonymous-toggle" id="anonymousToggle">
+        <div class="toggle-switch"></div>
+        <div class="toggle-label">
+          <i class="fas fa-user-secret"></i> Опубликовать анонимно
+        </div>
+      </div>
+      
       <div class="input-row">
         <div class="input-group">
           <i class="fas fa-user"></i>
-          <input id="author" placeholder="Ваше имя" />
+          <input id="author" placeholder="Ваше имя (необязательно)" />
         </div>
         <div class="input-group">
           <i class="fas fa-graduation-cap"></i>
-          <input id="classCode" placeholder="Код класса (например 8A-18)" />
+          <input id="classCode" placeholder="Код класса (необязательно, например 8A-18)" />
         </div>
       </div>
       
@@ -930,7 +999,7 @@
       </div>
       
       <div class="form-actions">
-        <button class="publish-btn" onclick="addPost()">
+        <button class="publish-btn" id="publishBtn" onclick="addPost()">
           <i class="fas fa-paper-plane"></i>
           Опубликовать
         </button>
@@ -1011,6 +1080,7 @@
   // Текущий контекст
   let isAdmin = false;
   let postToDelete = null;
+  let isAnonymous = false;
 
   // Элементы
   const accessScreen = document.getElementById('accessScreen');
@@ -1020,6 +1090,9 @@
   const deleteModal = document.getElementById('deleteModal');
   const postsDiv = document.getElementById('posts');
   const notification = document.getElementById('notification');
+  const anonymousToggle = document.getElementById('anonymousToggle');
+  const authorInput = document.getElementById('author');
+  const publishBtn = document.getElementById('publishBtn');
   const body = document.body;
 
   // 🔥 FIREBASE CONFIG
@@ -1054,18 +1127,12 @@
   // Функции управления модальными окнами
   function showModal(modal) {
     modal.classList.remove('hidden');
-    body.classList.add('modal-open');
-    // Блокировка прокрутки фона
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
   }
 
   function hideModal(modal) {
     modal.classList.add('hidden');
-    body.classList.remove('modal-open');
-    // Разблокировка прокрутки
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
+    body.style.overflow = '';
   }
 
   // Функции уведомлений
@@ -1118,6 +1185,23 @@
     forum.classList.remove('hidden');
   }
 
+  // Переключение анонимного режима
+  anonymousToggle.addEventListener('click', function() {
+    isAnonymous = !isAnonymous;
+    this.classList.toggle('active', isAnonymous);
+    
+    if (isAnonymous) {
+      authorInput.disabled = true;
+      authorInput.placeholder = "Анонимный пользователь";
+      authorInput.value = "";
+      showNotification('info', 'Анонимный режим', 'Ваше сообщение будет опубликовано анонимно');
+    } else {
+      authorInput.disabled = false;
+      authorInput.placeholder = "Ваше имя (необязательно)";
+      showNotification('info', 'Именной режим', 'Вы можете указать своё имя');
+    }
+  });
+
   // Загрузка постов
   postsRef.on('value', snap => {
     postsDiv.innerHTML = '';
@@ -1151,8 +1235,11 @@
       div.className = 'post';
       div.dataset.id = post.id;
       
-      // Создание аватара из первой буквы имени
-      const firstLetter = post.author ? post.author.charAt(0).toUpperCase() : '?';
+      // Определение типа автора
+      const isPostAnonymous = post.author === 'Аноним' || !post.author;
+      const firstLetter = isPostAnonymous ? '?' : (post.author ? post.author.charAt(0).toUpperCase() : '?');
+      const avatarClass = isPostAnonymous ? 'anonymous-avatar' : 'user-avatar';
+      const authorName = isPostAnonymous ? 'Аноним' : (post.author || 'Аноним');
       
       // Получение и форматирование даты
       let displayDate = post.date;
@@ -1171,14 +1258,18 @@
         else displayDate = postDate.toLocaleDateString('ru-RU');
       }
       
+      // Определение класса для бейджа
+      const classBadgeText = post.class || 'Класс не указан';
+      const classBadgeClass = post.class ? 'class-badge' : 'class-badge no-class-badge';
+      
       div.innerHTML = `
         <div class="post-header">
           <div class="post-author">
-            <div class="author-avatar">${firstLetter}</div>
+            <div class="author-avatar ${avatarClass}">${firstLetter}</div>
             <div class="author-info">
-              <h4>${post.author || 'Аноним'}</h4>
+              <h4>${authorName}</h4>
               <div class="author-meta">
-                <span class="class-badge">${post.class || 'Класс не указан'}</span>
+                <span class="${classBadgeClass}">${classBadgeText}</span>
                 <span class="post-date"><i class="far fa-clock"></i> ${displayDate}</span>
               </div>
             </div>
@@ -1200,40 +1291,61 @@
 
   // Добавление поста
   function addPost() {
-    const author = document.getElementById('author').value.trim();
+    const author = isAnonymous ? 'Аноним' : document.getElementById('author').value.trim();
     const code = document.getElementById('classCode').value.trim();
     const title = document.getElementById('title').value.trim();
     const text = document.getElementById('text').value.trim();
 
-    const className = classCodes[code];
-    if (!className) {
-      showNotification('error', 'Ошибка', `Неверный код класса. Доступные коды: ${Object.keys(classCodes).join(', ')}`);
-      return;
-    }
-    if (!author || !title || !text) {
-      showNotification('error', 'Ошибка', 'Пожалуйста, заполните все поля');
+    // Проверка обязательных полей
+    if (!title || !text) {
+      showNotification('error', 'Ошибка', 'Пожалуйста, заполните заголовок и текст сообщения');
       return;
     }
 
+    // Определение класса
+    let className = '';
+    if (code) {
+      className = classCodes[code] || code; // Если код не распознан, используем как есть
+    }
+
     const postData = {
-      author,
+      author: author || 'Аноним',
       class: className,
       title,
       text,
       date: new Date().toLocaleString('ru-RU'),
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      isAnonymous: isAnonymous || !author
     };
+
+    // Блокировка кнопки на время отправки
+    publishBtn.disabled = true;
+    publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Публикация...';
 
     postsRef.push(postData)
       .then(() => {
+        // Сброс формы
+        if (!isAnonymous) {
+          document.getElementById('author').value = '';
+        }
+        document.getElementById('classCode').value = '';
         document.getElementById('title').value = '';
         document.getElementById('text').value = '';
+        
+        // Сброс кнопки
+        publishBtn.disabled = false;
+        publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Опубликовать';
+        
         showNotification('success', 'Успешно!', 'Сообщение опубликовано');
         
-        // Прокрутка к верху новых сообщений
-        window.scrollTo({ top: document.querySelector('.new-post').offsetTop - 100, behavior: 'smooth' });
+        // Прокрутка к верху
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       })
       .catch(error => {
+        // Сброс кнопки при ошибке
+        publishBtn.disabled = false;
+        publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Опубликовать';
+        
         showNotification('error', 'Ошибка', 'Не удалось опубликовать сообщение');
         console.error('Ошибка Firebase:', error);
       });
@@ -1344,13 +1456,24 @@
   // Подсказка при наведении на код класса
   document.getElementById('classCode').addEventListener('focus', function() {
     const availableCodes = Object.keys(classCodes).join(', ');
-    this.title = `Доступные коды: ${availableCodes}`;
+    this.title = `Доступные коды: ${availableCodes}. Можно оставить пустым.`;
   });
 
   // Автоматическое закрытие уведомления при клике
   notification.addEventListener('click', () => {
     notification.classList.remove('show');
     setTimeout(() => notification.classList.add('hidden'), 300);
+  });
+
+  // Валидация формы при вводе
+  document.getElementById('title').addEventListener('input', function() {
+    const isValid = this.value.trim().length > 0 && document.getElementById('text').value.trim().length > 0;
+    publishBtn.disabled = !isValid;
+  });
+
+  document.getElementById('text').addEventListener('input', function() {
+    const isValid = this.value.trim().length > 0 && document.getElementById('title').value.trim().length > 0;
+    publishBtn.disabled = !isValid;
   });
 </script>
 </body>
