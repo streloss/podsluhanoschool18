@@ -2,106 +2,569 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Форум МБОУ СОШ №18 (Якутск)</title>
+  <title>Форум МБОУ СОШ №18 | Якутск</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>18</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%233b82f6%22>18</text></svg>" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
   <style>
-    * { box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { margin: 0; background: #020617; color: #e5e7eb; }
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --dark-1: #0f172a;
+      --dark-2: #1e293b;
+      --dark-3: #334155;
+      --light-1: #f8fafc;
+      --light-2: #e2e8f0;
+      --light-3: #cbd5e1;
+      --border: rgba(255,255,255,0.1);
+      --shadow: 0 10px 25px rgba(0,0,0,0.3);
+      --shadow-lg: 0 20px 50px rgba(0,0,0,0.4);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+
+    body { 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: var(--light-1);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
     /* ACCESS SCREEN */
     .access {
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle at top, #1e293b, #020617);
+      padding: 20px;
+      background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+      animation: gradientShift 15s ease infinite;
     }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 0%, 100% 100%; }
+      50% { background-position: 100% 0%, 0% 100%; }
+    }
+
     .access-box {
-      background: #020617;
-      border: 1px solid #1e293b;
-      border-radius: 14px;
-      padding: 30px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px 35px;
       width: 100%;
-      max-width: 380px;
+      max-width: 420px;
       text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,.6);
+      box-shadow: var(--shadow-lg);
+      animation: fadeInUp 0.6s ease-out;
+      position: relative;
+      overflow: hidden;
     }
-    .access-box h1 { margin: 0 0 10px; }
-    .access-box p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+
+    .access-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+    }
+
+    .access-logo {
+      font-size: 3.5rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+
+    .access-box h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      background: linear-gradient(90deg, var(--light-1), var(--light-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .access-box p {
+      color: var(--light-3);
+      font-size: 15px;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .access-input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .access-input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--light-3);
+      font-size: 18px;
+    }
+
     .access-box input {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #334155;
-      background: #020617;
-      color: #e5e7eb;
-      margin-bottom: 12px;
+      padding: 15px 15px 15px 50px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--dark-3);
+      background: rgba(30, 41, 59, 0.6);
+      color: var(--light-1);
+      font-size: 15px;
+      transition: var(--transition);
     }
-    .access-box button {
+
+    .access-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .access-box input::placeholder {
+      color: var(--light-3);
+    }
+
+    .access-btn {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 16px;
+      border-radius: var(--radius-sm);
       border: none;
-      background: #2563eb;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
       color: white;
+      font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .access-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .access-btn:active {
+      transform: translateY(0);
     }
 
     /* FORUM */
+    .forum-container {
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
     header {
-      padding: 20px;
-      background: #020617;
-      border-bottom: 1px solid #1e293b;
+      padding: 20px 5%;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .header-left { text-align: left; }
-    .header-left h2 { margin: 0; font-size: 20px; }
-    .header-left p { margin: 5px 0 0; color: #94a3b8; font-size: 14px; }
-    
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 20px;
+      color: white;
+    }
+
+    .logo-text h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+      background: linear-gradient(90deg, var(--light-1), var(--light-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-text p {
+      color: var(--light-3);
+      font-size: 14px;
+      margin: 3px 0 0;
+    }
+
     .admin-auth-btn {
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: 1px solid #374151;
-      background: transparent;
-      color: #9ca3af;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(30, 41, 59, 0.6);
+      color: var(--light-2);
       cursor: pointer;
       font-size: 14px;
-      transition: all 0.2s;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+
     .admin-auth-btn:hover {
-      background: #1f2937;
-      border-color: #4b5563;
+      background: rgba(59, 130, 246, 0.1);
+      border-color: var(--primary);
+      transform: translateY(-2px);
     }
+
     .admin-badge {
-      background: #10b981;
+      background: linear-gradient(90deg, var(--success), #0d9488);
       color: white;
-      padding: 6px 12px;
+      padding: 8px 16px;
       border-radius: 20px;
       font-size: 14px;
+      font-weight: 600;
       display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 5%;
+    }
+
+    .new-post {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .new-post h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--light-1);
+    }
+
+    .new-post h3 i {
+      color: var(--primary);
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .input-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--light-3);
+      font-size: 16px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 14px 14px 14px 45px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(30, 41, 59, 0.6);
+      color: var(--light-1);
+      font-size: 15px;
+      transition: var(--transition);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      font-family: 'Inter', sans-serif;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: var(--light-3);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .publish-btn {
+      padding: 12px 28px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .publish-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .posts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--light-3);
+    }
+
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 15px;
+      color: var(--dark-3);
+    }
+
+    .empty-state h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: var(--light-2);
+    }
+
+    .post {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 25px;
+      transition: var(--transition);
+      animation: fadeIn 0.5s ease-out;
+      position: relative;
+    }
+
+    .post:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .post-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .author-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .author-info h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--light-1);
+    }
+
+    .author-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--light-3);
+    }
+
+    .class-badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .post-date {
+      color: var(--light-3);
+      font-size: 13px;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .delete-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    main { max-width: 900px; margin: 20px auto; padding: 0 15px; }
-    .new-post, .post { background: #020617; border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-    input, textarea { width: 100%; margin-bottom: 10px; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #020617; color: #e5e7eb; }
-    button { padding: 10px 16px; border-radius: 6px; border: none; cursor: pointer; transition: opacity 0.2s; }
-    button:hover { opacity: 0.9; }
-    .publish-btn { background: #2563eb; color: white; }
-    .delete-btn { background: #dc2626; color: white; padding: 5px 10px; font-size: 12px; margin-top: 10px; }
-    .author { color: #94a3b8; font-size: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .post-info { display: flex; gap: 10px; align-items: center; }
-    .post-class { background: #1e293b; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
-    footer { text-align: center; padding: 20px; color: #64748b; font-size: 14px; }
+    .delete-btn:hover {
+      background: var(--danger);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2);
+    }
+
+    .post-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--light-1);
+      line-height: 1.4;
+    }
+
+    .post-content {
+      color: var(--light-2);
+      line-height: 1.7;
+      font-size: 15px;
+      white-space: pre-line;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: var(--light-3);
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .footer-content {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .footer-content {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-links a {
+      color: var(--light-3);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+    }
 
     /* MODAL */
     .modal {
@@ -115,26 +578,189 @@
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease;
     }
+
     .modal-content {
-      background: #020617;
-      border: 1px solid #1e293b;
-      border-radius: 12px;
-      padding: 25px;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
       width: 90%;
-      max-width: 400px;
+      max-width: 450px;
+      box-shadow: var(--shadow-lg);
+      animation: fadeInUp 0.4s ease-out;
     }
-    .modal-content h3 { margin-top: 0; }
+
+    .modal-content h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--light-1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-content p {
+      color: var(--light-3);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
     .modal-actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       justify-content: flex-end;
-      margin-top: 20px;
+      margin-top: 25px;
     }
-    .modal-cancel { background: #4b5563; color: white; }
-    .modal-confirm { background: #dc2626; color: white; }
+
+    .modal-btn {
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-cancel {
+      background: rgba(30, 41, 59, 0.8);
+      color: var(--light-2);
+      border: 1px solid var(--border);
+    }
+
+    .modal-cancel:hover {
+      background: rgba(71, 85, 105, 0.8);
+    }
+
+    .modal-confirm {
+      background: linear-gradient(90deg, var(--danger), var(--danger-dark));
+      color: white;
+    }
+
+    .modal-confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2);
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(30, 41, 59, 0.8);
+      color: var(--light-1);
+      font-size: 15px;
+      margin-bottom: 20px;
+      transition: var(--transition);
+    }
+
+    .modal-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
 
     .hidden { display: none; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--dark-1);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--dark-3);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    /* LOADING */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--dark-3);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* NOTIFICATION */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: var(--radius-sm);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.success {
+      border-left: 4px solid var(--success);
+    }
+
+    .notification.error {
+      border-left: 4px solid var(--danger);
+    }
+
+    .notification.info {
+      border-left: 4px solid var(--primary);
+    }
+
+    .notification i {
+      font-size: 20px;
+    }
+
+    .notification.success i { color: var(--success); }
+    .notification.error i { color: var(--danger); }
+    .notification.info i { color: var(--primary); }
+
+    .notification-content h4 {
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: var(--light-1);
+    }
+
+    .notification-content p {
+      font-size: 13px;
+      color: var(--light-3);
+    }
   </style>
 </head>
 <body>
@@ -142,52 +768,103 @@
 <!-- ACCESS SCREEN -->
 <div class="access" id="accessScreen">
   <div class="access-box">
-    <h1>Школа №18</h1>
-    <p>Введите код доступа для просмотра и публикации сообщений</p>
-    <input id="schoolCode" placeholder="Код доступа школы" />
-    <button onclick="enterForum()">Войти</button>
+    <div class="access-logo">
+      <i class="fas fa-school"></i>
+    </div>
+    <h1>МБОУ СОШ №18</h1>
+    <p>Введите код доступа для входа в закрытое школьное сообщество</p>
+    <div class="access-input-group">
+      <i class="fas fa-key"></i>
+      <input id="schoolCode" placeholder="Код доступа школы" />
+    </div>
+    <button class="access-btn" onclick="enterForum()">
+      <i class="fas fa-sign-in-alt"></i>
+      Войти на форум
+    </button>
   </div>
 </div>
 
 <!-- FORUM -->
-<div id="forum" class="hidden">
+<div id="forum" class="hidden forum-container">
   <header>
-    <div class="header-left">
-      <h2>Форум МБОУ СОШ №18</h2>
-      <p>Закрытое школьное сообщество</p>
+    <div class="logo-container">
+      <div class="logo">18</div>
+      <div class="logo-text">
+        <h2>Форум МБОУ СОШ №18</h2>
+        <p>Закрытое школьное сообщество • Якутск</p>
+      </div>
     </div>
+    
     <button id="adminAuthBtn" class="admin-auth-btn" onclick="showAdminAuth()">
+      <i class="fas fa-user-shield"></i>
       Авторизация для модерации
     </button>
   </header>
 
   <main>
     <div class="new-post">
-      <h3>Новое сообщение</h3>
-      <input id="author" placeholder="Имя" />
-      <input id="classCode" placeholder="Код класса (например 8A-18)" />
-      <input id="title" placeholder="Заголовок" />
-      <textarea id="text" rows="4" placeholder="Сообщение"></textarea>
-      <button class="publish-btn" onclick="addPost()">Опубликовать</button>
+      <h3><i class="fas fa-plus-circle"></i> Создать новое сообщение</h3>
+      
+      <div class="input-row">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input id="author" placeholder="Ваше имя" />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-graduation-cap"></i>
+          <input id="classCode" placeholder="Код класса (например 8A-18)" />
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-heading"></i>
+        <input id="title" placeholder="Заголовок сообщения" />
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-comment-alt"></i>
+        <textarea id="text" rows="4" placeholder="Текст сообщения..."></textarea>
+      </div>
+      
+      <div class="form-actions">
+        <button class="publish-btn" onclick="addPost()">
+          <i class="fas fa-paper-plane"></i>
+          Опубликовать
+        </button>
+      </div>
     </div>
 
-    <div id="posts"></div>
+    <div id="posts" class="posts-container">
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    </div>
   </main>
 
   <footer>
-    © МБОУ СОШ №18 • Закрытый форум
+    <div class="footer-content">
+      <div>© 2024 МБОУ СОШ №18 • Закрытый форум</div>
+      <div class="footer-links">
+        <a href="#"><i class="fas fa-shield-alt"></i> Конфиденциальность</a>
+        <a href="#"><i class="fas fa-info-circle"></i> Правила</a>
+      </div>
+    </div>
   </footer>
 </div>
 
 <!-- ADMIN AUTH MODAL -->
 <div id="adminAuthModal" class="modal hidden">
   <div class="modal-content">
-    <h3>Авторизация модератора</h3>
-    <p>Введите пароль администратора:</p>
-    <input type="password" id="adminPassword" placeholder="Пароль администратора" />
+    <h3><i class="fas fa-user-shield"></i> Авторизация модератора</h3>
+    <p>Введите пароль администратора для доступа к функциям модерации:</p>
+    <input type="password" id="adminPassword" class="modal-input" placeholder="Пароль администратора" />
     <div class="modal-actions">
-      <button class="modal-cancel" onclick="hideAdminAuth()">Отмена</button>
-      <button class="modal-confirm" onclick="adminLogin()">Войти</button>
+      <button class="modal-btn modal-cancel" onclick="hideAdminAuth()">
+        <i class="fas fa-times"></i> Отмена
+      </button>
+      <button class="modal-btn modal-confirm" onclick="adminLogin()">
+        <i class="fas fa-sign-in-alt"></i> Войти
+      </button>
     </div>
   </div>
 </div>
@@ -195,12 +872,25 @@
 <!-- DELETE CONFIRM MODAL -->
 <div id="deleteModal" class="modal hidden">
   <div class="modal-content">
-    <h3>Подтверждение удаления</h3>
-    <p>Вы уверены, что хотите удалить это сообщение?</p>
+    <h3><i class="fas fa-exclamation-triangle"></i> Подтверждение удаления</h3>
+    <p>Вы уверены, что хотите удалить это сообщение? Это действие нельзя отменить.</p>
     <div class="modal-actions">
-      <button class="modal-cancel" onclick="hideDeleteModal()">Отмена</button>
-      <button class="modal-confirm" onclick="confirmDelete()">Удалить</button>
+      <button class="modal-btn modal-cancel" onclick="hideDeleteModal()">
+        <i class="fas fa-times"></i> Отмена
+      </button>
+      <button class="modal-btn modal-confirm" onclick="confirmDelete()">
+        <i class="fas fa-trash-alt"></i> Удалить
+      </button>
     </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="notification" class="notification hidden">
+  <i id="notificationIcon"></i>
+  <div class="notification-content">
+    <h4 id="notificationTitle"></h4>
+    <p id="notificationMessage"></p>
   </div>
 </div>
 
@@ -220,24 +910,7 @@
   const adminAuthModal = document.getElementById('adminAuthModal');
   const deleteModal = document.getElementById('deleteModal');
   const postsDiv = document.getElementById('posts');
-
-  // Вход в форум
-  function enterForum() {
-    const code = document.getElementById('schoolCode').value.trim();
-    if (code !== SCHOOL_ACCESS_CODE) {
-      alert('Неверный код доступа');
-      return;
-    }
-    localStorage.setItem('school18_access', 'true');
-    accessScreen.classList.add('hidden');
-    forum.classList.remove('hidden');
-  }
-
-  // Проверка доступа при загрузке
-  if (localStorage.getItem('school18_access') === 'true') {
-    accessScreen.classList.add('hidden');
-    forum.classList.remove('hidden');
-  }
+  const notification = document.getElementById('notification');
 
   // 🔥 FIREBASE CONFIG
   const firebaseConfig = {
@@ -251,6 +924,7 @@
     measurementId: "G-R11QC7KCQT"
   };
 
+  // Инициализация Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
   const postsRef = db.ref('posts');
@@ -267,38 +941,131 @@
     "11A-18": "11А"
   };
 
+  // Функции уведомлений
+  function showNotification(type, title, message) {
+    const icon = notification.querySelector('#notificationIcon');
+    const notificationTitle = notification.querySelector('#notificationTitle');
+    const notificationMessage = notification.querySelector('#notificationMessage');
+    
+    notification.className = `notification ${type}`;
+    notificationTitle.textContent = title;
+    notificationMessage.textContent = message;
+    
+    switch(type) {
+      case 'success':
+        icon.className = 'fas fa-check-circle';
+        break;
+      case 'error':
+        icon.className = 'fas fa-exclamation-circle';
+        break;
+      case 'info':
+        icon.className = 'fas fa-info-circle';
+        break;
+    }
+    
+    notification.classList.remove('hidden');
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+      notification.classList.remove('show');
+      setTimeout(() => notification.classList.add('hidden'), 300);
+    }, 3000);
+  }
+
+  // Вход в форум
+  function enterForum() {
+    const code = document.getElementById('schoolCode').value.trim();
+    if (code !== SCHOOL_ACCESS_CODE) {
+      showNotification('error', 'Ошибка доступа', 'Неверный код доступа школы');
+      return;
+    }
+    localStorage.setItem('school18_access', 'true');
+    accessScreen.classList.add('hidden');
+    forum.classList.remove('hidden');
+    showNotification('success', 'Добро пожаловать!', 'Вы успешно вошли на форум');
+  }
+
+  // Проверка доступа при загрузке
+  if (localStorage.getItem('school18_access') === 'true') {
+    accessScreen.classList.add('hidden');
+    forum.classList.remove('hidden');
+  }
+
   // Загрузка постов
   postsRef.on('value', snap => {
     postsDiv.innerHTML = '';
     const data = snap.val();
+    
     if (!data) {
-      postsDiv.innerHTML = '<div class="post"><p>Пока нет сообщений. Будьте первым!</p></div>';
+      postsDiv.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-comments"></i>
+          <h3>Пока нет сообщений</h3>
+          <p>Будьте первым, кто поделится новостью или вопросом!</p>
+        </div>
+      `;
       return;
     }
     
-    Object.entries(data).reverse().forEach(([key, p]) => {
+    // Создание массива постов с ключами
+    const postsArray = Object.entries(data).map(([key, value]) => ({
+      id: key,
+      ...value
+    }));
+    
+    // Сортировка по дате (новые сначала)
+    postsArray.sort((a, b) => {
+      return new Date(b.date || 0) - new Date(a.date || 0);
+    });
+    
+    // Отображение постов
+    postsArray.forEach(post => {
       const div = document.createElement('div');
       div.className = 'post';
-      div.dataset.id = key;
+      div.dataset.id = post.id;
       
-      const authorHtml = `
-        <div class="post-info">
-          <span>${p.author}</span>
-          <span class="post-class">${p.class}</span>
-          <span>${p.date}</span>
-        </div>
-      `;
+      // Создание аватара из первой буквы имени
+      const firstLetter = post.author ? post.author.charAt(0).toUpperCase() : '?';
       
-      const deleteBtn = isAdmin ? 
-        `<button class="delete-btn" onclick="showDeleteModal('${key}')">Удалить</button>` : '';
+      // Получение и форматирование даты
+      let displayDate = post.date;
+      if (post.timestamp) {
+        const postDate = new Date(post.timestamp);
+        const now = new Date();
+        const diffMs = now - postDate;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+        
+        if (diffMins < 1) displayDate = 'Только что';
+        else if (diffMins < 60) displayDate = `${diffMins} мин. назад`;
+        else if (diffHours < 24) displayDate = `${diffHours} ч. назад`;
+        else if (diffDays < 7) displayDate = `${diffDays} дн. назад`;
+        else displayDate = postDate.toLocaleDateString('ru-RU');
+      }
       
       div.innerHTML = `
-        <div class="author">
-          ${authorHtml}
+        <div class="post-header">
+          <div class="post-author">
+            <div class="author-avatar">${firstLetter}</div>
+            <div class="author-info">
+              <h4>${post.author || 'Аноним'}</h4>
+              <div class="author-meta">
+                <span class="class-badge">${post.class || 'Класс не указан'}</span>
+                <span class="post-date"><i class="far fa-clock"></i> ${displayDate}</span>
+              </div>
+            </div>
+          </div>
+          ${isAdmin ? `
+            <div class="post-actions">
+              <button class="delete-btn" onclick="showDeleteModal('${post.id}')">
+                <i class="fas fa-trash-alt"></i> Удалить
+              </button>
+            </div>
+          ` : ''}
         </div>
-        <h3>${p.title}</h3>
-        <div>${p.text.replace(/\n/g, '<br>')}</div>
-        ${deleteBtn}
+        <h3 class="post-title">${post.title || 'Без заголовка'}</h3>
+        <div class="post-content">${post.text || ''}</div>
       `;
       postsDiv.appendChild(div);
     });
@@ -313,24 +1080,36 @@
 
     const className = classCodes[code];
     if (!className) {
-      alert('Неверный код класса. Доступные коды: ' + Object.keys(classCodes).join(', '));
+      showNotification('error', 'Ошибка', `Неверный код класса. Доступные коды: ${Object.keys(classCodes).join(', ')}`);
       return;
     }
     if (!author || !title || !text) {
-      alert('Заполните все поля');
+      showNotification('error', 'Ошибка', 'Пожалуйста, заполните все поля');
       return;
     }
 
-    postsRef.push({
+    const postData = {
       author,
       class: className,
       title,
       text,
-      date: new Date().toLocaleString('ru-RU')
-    });
+      date: new Date().toLocaleString('ru-RU'),
+      timestamp: Date.now()
+    };
 
-    document.getElementById('title').value = '';
-    document.getElementById('text').value = '';
+    postsRef.push(postData)
+      .then(() => {
+        document.getElementById('title').value = '';
+        document.getElementById('text').value = '';
+        showNotification('success', 'Успешно!', 'Сообщение опубликовано');
+        
+        // Прокрутка к верху новых сообщений
+        postsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      })
+      .catch(error => {
+        showNotification('error', 'Ошибка', 'Не удалось опубликовать сообщение');
+        console.error('Ошибка Firebase:', error);
+      });
   }
 
   // АДМИН ФУНКЦИИ
@@ -349,26 +1128,36 @@
     if (password === ADMIN_PASSWORD) {
       isAdmin = true;
       localStorage.setItem('school18_admin', 'true');
-      adminAuthBtn.innerHTML = '<span class="admin-badge">👑 Модератор</span>';
+      adminAuthBtn.innerHTML = `
+        <span class="admin-badge">
+          <i class="fas fa-crown"></i> Режим модератора
+        </span>
+      `;
       adminAuthBtn.onclick = adminLogout;
       hideAdminAuth();
-      alert('Вы вошли как модератор');
+      showNotification('success', 'Успешная авторизация', 'Вы вошли как модератор');
     } else {
-      alert('Неверный пароль');
+      showNotification('error', 'Ошибка', 'Неверный пароль администратора');
     }
   }
 
   function adminLogout() {
     isAdmin = false;
     localStorage.removeItem('school18_admin');
-    adminAuthBtn.innerHTML = 'Авторизация для модерации';
+    adminAuthBtn.innerHTML = `
+      <i class="fas fa-user-shield"></i>
+      Авторизация для модерации
+    `;
     adminAuthBtn.onclick = showAdminAuth;
-    alert('Вы вышли из режима модератора');
+    showNotification('info', 'Выход', 'Вы вышли из режима модератора');
   }
 
   // УДАЛЕНИЕ ПОСТОВ
   function showDeleteModal(postId) {
-    if (!isAdmin) return;
+    if (!isAdmin) {
+      showNotification('error', 'Доступ запрещен', 'Требуется авторизация модератора');
+      return;
+    }
     postToDelete = postId;
     deleteModal.classList.remove('hidden');
   }
@@ -384,17 +1173,22 @@
     db.ref('posts/' + postToDelete).remove()
       .then(() => {
         hideDeleteModal();
-        alert('Сообщение удалено');
+        showNotification('success', 'Удалено', 'Сообщение успешно удалено');
       })
       .catch(error => {
-        alert('Ошибка при удалении: ' + error.message);
+        showNotification('error', 'Ошибка', 'Не удалось удалить сообщение');
+        console.error('Ошибка удаления:', error);
       });
   }
 
   // Проверка админ-сессии при загрузке
   if (localStorage.getItem('school18_admin') === 'true') {
     isAdmin = true;
-    adminAuthBtn.innerHTML = '<span class="admin-badge">👑 Модератор</span>';
+    adminAuthBtn.innerHTML = `
+      <span class="admin-badge">
+        <i class="fas fa-crown"></i> Режим модератора
+      </span>
+    `;
     adminAuthBtn.onclick = adminLogout;
   }
 
@@ -410,6 +1204,20 @@
       hideAdminAuth();
       hideDeleteModal();
     }
+  });
+
+  // Фокус на поле ввода кода при загрузке
+  document.addEventListener('DOMContentLoaded', () => {
+    const schoolCodeInput = document.getElementById('schoolCode');
+    if (schoolCodeInput) {
+      schoolCodeInput.focus();
+    }
+  });
+
+  // Подсказка при наведении на код класса
+  document.getElementById('classCode').addEventListener('focus', function() {
+    const availableCodes = Object.keys(classCodes).join(', ');
+    this.title = `Доступные коды: ${availableCodes}`;
   });
 </script>
 </body>
