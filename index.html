@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Форум МБОУ СОШ №18 (Якутск)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { margin: 0; background: #020617; color: #e5e7eb; }
+
+    /* ACCESS SCREEN */
+    .access {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #1e293b, #020617);
+    }
+    .access-box {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      padding: 30px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    }
+    .access-box h1 { margin: 0 0 10px; }
+    .access-box p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+    .access-box input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #020617;
+      color: #e5e7eb;
+      margin-bottom: 12px;
+    }
+    .access-box button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* FORUM */
+    header { padding: 20px; background: #020617; border-bottom: 1px solid #1e293b; text-align: center; }
+    main { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+    .new-post, .post { background: #020617; border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+    input, textarea { width: 100%; margin-bottom: 10px; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #020617; color: #e5e7eb; }
+    button { padding: 10px 16px; border-radius: 6px; border: none; background: #2563eb; color: white; cursor: pointer; }
+    .author { color: #94a3b8; font-size: 14px; }
+    footer { text-align: center; padding: 20px; color: #64748b; font-size: 14px; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ACCESS SCREEN -->
+<div class="access" id="accessScreen">
+  <div class="access-box">
+    <h1>Школа №18</h1>
+    <p>Введите код доступа для просмотра и публикации сообщений</p>
+    <input id="schoolCode" placeholder="Код доступа школы" />
+    <button onclick="enterForum()">Войти</button>
+  </div>
+</div>
+
+<!-- FORUM -->
+<div id="forum" class="hidden">
+  <header>
+    <h2>Форум МБОУ СОШ №18</h2>
+    <p>Закрытое школьное сообщество</p>
+  </header>
+
+  <main>
+    <div class="new-post">
+      <h3>Новое сообщение</h3>
+      <input id="author" placeholder="Имя" />
+      <input id="classCode" placeholder="Код класса (например 8A-18)" />
+      <input id="title" placeholder="Заголовок" />
+      <textarea id="text" rows="4" placeholder="Сообщение"></textarea>
+      <button onclick="addPost()">Опубликовать</button>
+    </div>
+
+    <div id="posts"></div>
+  </main>
+
+  <footer>
+    © МБОУ СОШ №18 • Закрытый форум
+  </footer>
+</div>
+
+<script>
+  // 🔐 КОД ДОСТУПА ШКОЛЫ (ПОДСЛУШКА СОШ 18)
+  const SCHOOL_ACCESS_CODE = "LISTEN18";
+
+  function enterForum() {
+    const code = document.getElementById('schoolCode').value.trim();
+    if (code !== SCHOOL_ACCESS_CODE) {
+      alert('Неверный код доступа');
+      return;
+    }
+    localStorage.setItem('school18_access', 'true');
+    document.getElementById('accessScreen').classList.add('hidden');
+    document.getElementById('forum').classList.remove('hidden');
+  }
+
+  if (localStorage.getItem('school18_access') === 'true') {
+    document.getElementById('accessScreen').classList.add('hidden');
+    document.getElementById('forum').classList.remove('hidden');
+  }
+
+  // 🔥 FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "PASTE_HERE",
+    authDomain: "PASTE_HERE",
+    databaseURL: "PASTE_HERE",
+    projectId: "PASTE_HERE",
+    storageBucket: "PASTE_HERE",
+    messagingSenderId: "PASTE_HERE",
+    appId: "PASTE_HERE"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const postsRef = db.ref('posts');
+
+  // 🔑 КОДЫ КЛАССОВ
+  const classCodes = {
+    "7A-18": "7А",
+    "7B-18": "7Б",
+    "8A-18": "8А",
+    "8B-18": "8Б",
+    "9A-18": "9А",
+    "9B-18": "9Б",
+    "10A-18": "10А",
+    "11A-18": "11А"
+  };
+
+  const postsDiv = document.getElementById('posts');
+
+  postsRef.on('value', snap => {
+    postsDiv.innerHTML = '';
+    const data = snap.val();
+    if (!data) return;
+    Object.values(data).reverse().forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'post';
+      div.innerHTML = `
+        <h3>${p.title}</h3>
+        <div class="author">${p.author} (${p.class}) • ${p.date}</div>
+        <div>${p.text}</div>
+      `;
+      postsDiv.appendChild(div);
+    });
+  });
+
+  function addPost() {
+    const author = document.getElementById('author').value.trim();
+    const code = document.getElementById('classCode').value.trim();
+    const title = document.getElementById('title').value.trim();
+    const text = document.getElementById('text').value.trim();
+
+    const className = classCodes[code];
+    if (!className) return alert('Неверный код класса');
+    if (!author || !title || !text) return alert('Заполните все поля');
+
+    postsRef.push({
+      author,
+      class: className,
+      title,
+      text,
+      date: new Date().toLocaleString()
+    });
+
+    document.getElementById('title').value = '';
+    document.getElementById('text').value = '';
+  }
+</script>
+
+</body>
+</html>
