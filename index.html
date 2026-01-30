@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Форум МБОУ СОШ №18 (Якутск)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>18</text></svg>" />
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -53,13 +54,85 @@
     }
 
     /* FORUM */
-    header { padding: 20px; background: #020617; border-bottom: 1px solid #1e293b; text-align: center; }
+    header {
+      padding: 20px;
+      background: #020617;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-left { text-align: left; }
+    .header-left h2 { margin: 0; font-size: 20px; }
+    .header-left p { margin: 5px 0 0; color: #94a3b8; font-size: 14px; }
+    
+    .admin-auth-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      background: transparent;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .admin-auth-btn:hover {
+      background: #1f2937;
+      border-color: #4b5563;
+    }
+    .admin-badge {
+      background: #10b981;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     main { max-width: 900px; margin: 20px auto; padding: 0 15px; }
     .new-post, .post { background: #020617; border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
     input, textarea { width: 100%; margin-bottom: 10px; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #020617; color: #e5e7eb; }
-    button { padding: 10px 16px; border-radius: 6px; border: none; background: #2563eb; color: white; cursor: pointer; }
-    .author { color: #94a3b8; font-size: 14px; }
+    button { padding: 10px 16px; border-radius: 6px; border: none; cursor: pointer; transition: opacity 0.2s; }
+    button:hover { opacity: 0.9; }
+    .publish-btn { background: #2563eb; color: white; }
+    .delete-btn { background: #dc2626; color: white; padding: 5px 10px; font-size: 12px; margin-top: 10px; }
+    .author { color: #94a3b8; font-size: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .post-info { display: flex; gap: 10px; align-items: center; }
+    .post-class { background: #1e293b; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
     footer { text-align: center; padding: 20px; color: #64748b; font-size: 14px; }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 25px;
+      width: 90%;
+      max-width: 400px;
+    }
+    .modal-content h3 { margin-top: 0; }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    .modal-cancel { background: #4b5563; color: white; }
+    .modal-confirm { background: #dc2626; color: white; }
 
     .hidden { display: none; }
   </style>
@@ -79,8 +152,13 @@
 <!-- FORUM -->
 <div id="forum" class="hidden">
   <header>
-    <h2>Форум МБОУ СОШ №18</h2>
-    <p>Закрытое школьное сообщество</p>
+    <div class="header-left">
+      <h2>Форум МБОУ СОШ №18</h2>
+      <p>Закрытое школьное сообщество</p>
+    </div>
+    <button id="adminAuthBtn" class="admin-auth-btn" onclick="showAdminAuth()">
+      Авторизация для модерации
+    </button>
   </header>
 
   <main>
@@ -90,7 +168,7 @@
       <input id="classCode" placeholder="Код класса (например 8A-18)" />
       <input id="title" placeholder="Заголовок" />
       <textarea id="text" rows="4" placeholder="Сообщение"></textarea>
-      <button onclick="addPost()">Опубликовать</button>
+      <button class="publish-btn" onclick="addPost()">Опубликовать</button>
     </div>
 
     <div id="posts"></div>
@@ -101,10 +179,49 @@
   </footer>
 </div>
 
-<script>
-  // 🔐 КОД ДОСТУПА ШКОЛЫ (ПОДСЛУШКА СОШ 18)
-  const SCHOOL_ACCESS_CODE = "LISTEN18";
+<!-- ADMIN AUTH MODAL -->
+<div id="adminAuthModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Авторизация модератора</h3>
+    <p>Введите пароль администратора:</p>
+    <input type="password" id="adminPassword" placeholder="Пароль администратора" />
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="hideAdminAuth()">Отмена</button>
+      <button class="modal-confirm" onclick="adminLogin()">Войти</button>
+    </div>
+  </div>
+</div>
 
+<!-- DELETE CONFIRM MODAL -->
+<div id="deleteModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Подтверждение удаления</h3>
+    <p>Вы уверены, что хотите удалить это сообщение?</p>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="hideDeleteModal()">Отмена</button>
+      <button class="modal-confirm" onclick="confirmDelete()">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 🔐 КОДЫ ДОСТУПА
+  const SCHOOL_ACCESS_CODE = "LISTEN18";
+  const ADMIN_PASSWORD = "ADMIN18_MOD"; // Пароль для админа
+
+  // Текущий контекст
+  let isAdmin = false;
+  let postToDelete = null;
+
+  // Элементы
+  const accessScreen = document.getElementById('accessScreen');
+  const forum = document.getElementById('forum');
+  const adminAuthBtn = document.getElementById('adminAuthBtn');
+  const adminAuthModal = document.getElementById('adminAuthModal');
+  const deleteModal = document.getElementById('deleteModal');
+  const postsDiv = document.getElementById('posts');
+
+  // Вход в форум
   function enterForum() {
     const code = document.getElementById('schoolCode').value.trim();
     if (code !== SCHOOL_ACCESS_CODE) {
@@ -112,26 +229,27 @@
       return;
     }
     localStorage.setItem('school18_access', 'true');
-    document.getElementById('accessScreen').classList.add('hidden');
-    document.getElementById('forum').classList.remove('hidden');
+    accessScreen.classList.add('hidden');
+    forum.classList.remove('hidden');
   }
 
+  // Проверка доступа при загрузке
   if (localStorage.getItem('school18_access') === 'true') {
-    document.getElementById('accessScreen').classList.add('hidden');
-    document.getElementById('forum').classList.remove('hidden');
+    accessScreen.classList.add('hidden');
+    forum.classList.remove('hidden');
   }
 
   // 🔥 FIREBASE CONFIG
-const firebaseConfig = {
-  apiKey: "AIzaSyAnD4g7ep8-4pNOYjNFWOqoi6-vfjctjTA",
-  authDomain: "podsluhano18school.firebaseapp.com",
-  databaseURL: "https://podsluhano18school-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "podsluhano18school",
-  storageBucket: "podsluhano18school.firebasestorage.app",
-  messagingSenderId: "378677284237",
-  appId: "1:378677284237:web:4a713fcfb9082193e001c4",
-  measurementId: "G-R11QC7KCQT"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyAnD4g7ep8-4pNOYjNFWOqoi6-vfjctjTA",
+    authDomain: "podsluhano18school.firebaseapp.com",
+    databaseURL: "https://podsluhano18school-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "podsluhano18school",
+    storageBucket: "podsluhano18school.firebasestorage.app",
+    messagingSenderId: "378677284237",
+    appId: "1:378677284237:web:4a713fcfb9082193e001c4",
+    measurementId: "G-R11QC7KCQT"
+  };
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
@@ -149,24 +267,44 @@ const firebaseConfig = {
     "11A-18": "11А"
   };
 
-  const postsDiv = document.getElementById('posts');
-
+  // Загрузка постов
   postsRef.on('value', snap => {
     postsDiv.innerHTML = '';
     const data = snap.val();
-    if (!data) return;
-    Object.values(data).reverse().forEach(p => {
+    if (!data) {
+      postsDiv.innerHTML = '<div class="post"><p>Пока нет сообщений. Будьте первым!</p></div>';
+      return;
+    }
+    
+    Object.entries(data).reverse().forEach(([key, p]) => {
       const div = document.createElement('div');
       div.className = 'post';
+      div.dataset.id = key;
+      
+      const authorHtml = `
+        <div class="post-info">
+          <span>${p.author}</span>
+          <span class="post-class">${p.class}</span>
+          <span>${p.date}</span>
+        </div>
+      `;
+      
+      const deleteBtn = isAdmin ? 
+        `<button class="delete-btn" onclick="showDeleteModal('${key}')">Удалить</button>` : '';
+      
       div.innerHTML = `
+        <div class="author">
+          ${authorHtml}
+        </div>
         <h3>${p.title}</h3>
-        <div class="author">${p.author} (${p.class}) • ${p.date}</div>
-        <div>${p.text}</div>
+        <div>${p.text.replace(/\n/g, '<br>')}</div>
+        ${deleteBtn}
       `;
       postsDiv.appendChild(div);
     });
   });
 
+  // Добавление поста
   function addPost() {
     const author = document.getElementById('author').value.trim();
     const code = document.getElementById('classCode').value.trim();
@@ -174,21 +312,105 @@ const firebaseConfig = {
     const text = document.getElementById('text').value.trim();
 
     const className = classCodes[code];
-    if (!className) return alert('Неверный код класса');
-    if (!author || !title || !text) return alert('Заполните все поля');
+    if (!className) {
+      alert('Неверный код класса. Доступные коды: ' + Object.keys(classCodes).join(', '));
+      return;
+    }
+    if (!author || !title || !text) {
+      alert('Заполните все поля');
+      return;
+    }
 
     postsRef.push({
       author,
       class: className,
       title,
       text,
-      date: new Date().toLocaleString()
+      date: new Date().toLocaleString('ru-RU')
     });
 
     document.getElementById('title').value = '';
     document.getElementById('text').value = '';
   }
-</script>
 
+  // АДМИН ФУНКЦИИ
+  function showAdminAuth() {
+    adminAuthModal.classList.remove('hidden');
+    document.getElementById('adminPassword').focus();
+  }
+
+  function hideAdminAuth() {
+    adminAuthModal.classList.add('hidden');
+    document.getElementById('adminPassword').value = '';
+  }
+
+  function adminLogin() {
+    const password = document.getElementById('adminPassword').value.trim();
+    if (password === ADMIN_PASSWORD) {
+      isAdmin = true;
+      localStorage.setItem('school18_admin', 'true');
+      adminAuthBtn.innerHTML = '<span class="admin-badge">👑 Модератор</span>';
+      adminAuthBtn.onclick = adminLogout;
+      hideAdminAuth();
+      alert('Вы вошли как модератор');
+    } else {
+      alert('Неверный пароль');
+    }
+  }
+
+  function adminLogout() {
+    isAdmin = false;
+    localStorage.removeItem('school18_admin');
+    adminAuthBtn.innerHTML = 'Авторизация для модерации';
+    adminAuthBtn.onclick = showAdminAuth;
+    alert('Вы вышли из режима модератора');
+  }
+
+  // УДАЛЕНИЕ ПОСТОВ
+  function showDeleteModal(postId) {
+    if (!isAdmin) return;
+    postToDelete = postId;
+    deleteModal.classList.remove('hidden');
+  }
+
+  function hideDeleteModal() {
+    deleteModal.classList.add('hidden');
+    postToDelete = null;
+  }
+
+  function confirmDelete() {
+    if (!postToDelete || !isAdmin) return;
+    
+    db.ref('posts/' + postToDelete).remove()
+      .then(() => {
+        hideDeleteModal();
+        alert('Сообщение удалено');
+      })
+      .catch(error => {
+        alert('Ошибка при удалении: ' + error.message);
+      });
+  }
+
+  // Проверка админ-сессии при загрузке
+  if (localStorage.getItem('school18_admin') === 'true') {
+    isAdmin = true;
+    adminAuthBtn.innerHTML = '<span class="admin-badge">👑 Модератор</span>';
+    adminAuthBtn.onclick = adminLogout;
+  }
+
+  // Закрытие модалок по клику вне области
+  window.addEventListener('click', (e) => {
+    if (e.target === adminAuthModal) hideAdminAuth();
+    if (e.target === deleteModal) hideDeleteModal();
+  });
+
+  // Закрытие по Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      hideAdminAuth();
+      hideDeleteModal();
+    }
+  });
+</script>
 </body>
 </html>
