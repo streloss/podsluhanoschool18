@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["https://streloss.github.io", "http://localhost:*"],
+    "method": ["GET", "POST", "PUT", "DELETE"],
+    "maxAgeSeconds": 3600
+  }
+]
